@@ -373,7 +373,7 @@ GameObject:
   - component: {fileID: 142692355}
   - component: {fileID: 142692359}
   - component: {fileID: 142692360}
-  m_Layer: 6
+  m_Layer: 11
   m_Name: KeyPad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -950,7 +950,7 @@ MonoBehaviour:
   distance: 3
   mask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 2048
 --- !u!114 &641110992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -981,6 +981,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a577fe38a4b08684bac45209d9ce6907, type: 3}
   - {fileID: 8300000, guid: 1ff46df9f25de11448b93aff2aa5f91e, type: 3}
   - {fileID: 8300000, guid: 69ebc0c54e783054e8af382b96fe8dd5, type: 3}
+  runningSound: {fileID: 0}
 --- !u!82 &641110998
 AudioSource:
   m_ObjectHideFlags: 0

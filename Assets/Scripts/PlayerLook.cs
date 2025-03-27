@@ -8,6 +8,11 @@ public class PlayerLook : MonoBehaviour
     public float xSesitivity = 30f;
     public float ySesitivity = 30f;
 
+    void Start()
+    {
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+    }
 
     public void ProcessLook(Vector2 input)
     {
