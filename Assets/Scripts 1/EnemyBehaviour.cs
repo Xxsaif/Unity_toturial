@@ -10,6 +10,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     [SerializeField] private NavMeshAgent agent;
     private float moveSpeed = 3f;
+    private float minSpeed = 1f;
+    private float maxSpeed = 3f;
+    private float tMove = 0f;
+    [SerializeField] private AnimationCurve curveMove;
 
     [SerializeField] private GameObject player;
     private Vector3 playerPosition;
@@ -19,6 +23,9 @@ public class EnemyBehaviour : MonoBehaviour
     private float damage = 15f;
 
     [SerializeField] private Animator animator;
+    [SerializeField] private GameObject model;
+
+    
 
     void Start()
     {
@@ -38,6 +45,7 @@ public class EnemyBehaviour : MonoBehaviour
     
     void Update()
     {
+        
         playerPosition = player.transform.position;
         if (agent.destination != playerPosition)
         {
@@ -54,23 +62,33 @@ public class EnemyBehaviour : MonoBehaviour
         else
         {
             CancelInvoke();
-            if (agent.isStopped == true && (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f || animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 0f))
+            if (agent.isStopped && (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f || animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 0f))
             {
                 Move();
                 state = EnemyStates.Walking;
                 WalkAni();
                 attacking = false;
+                model.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
             }
         }
         
-
-        if (state == EnemyStates.Attacking && agent.isStopped == true)
+        if (!agent.isStopped && state == EnemyStates.Walking)
+        {
+            tMove += Time.deltaTime / 4.033f;
+            moveSpeed = curveMove.Evaluate(tMove) * 2.9f;
+            agent.speed = moveSpeed;
+        }
+        if (state == EnemyStates.Attacking && agent.isStopped)
         {
             if (!attacking)
             {
                 Invoke(nameof(Attack), 2.63f);
                 AttackAni();
                 attacking = true;
+            }
+            if (model.transform.position.y != 0f)
+            {
+                model.transform.position = new Vector3(model.transform.position.x, 0f, model.transform.position.z);
             }
         }
     }
@@ -130,8 +148,8 @@ public class EnemyBehaviour : MonoBehaviour
     private void AttackAni()
     {
         //IdleAni();
-        animator.SetBool("Walking", false);
-        animator.SetBool("Running", false);
+        //animator.SetBool("Walking", false);
+        //animator.SetBool("Running", false);
         animator.SetTrigger("zombieAttack");
 
     }

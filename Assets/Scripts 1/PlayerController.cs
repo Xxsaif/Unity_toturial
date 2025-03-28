@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
     private float exhausted = 0f;
     public bool isExhausted;
     [SerializeField] private TextMeshProUGUI staminaText; // Temporary stamina text, could be replaced with stamina bar
+
+    private float timer;
+    [SerializeField] private TextMeshProUGUI timerText;
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -41,6 +44,10 @@ public class PlayerController : MonoBehaviour
          * Den kollar om det finns något objekt på lagret ground (groundMask) som kolliderar med sfären och returnerar en bool. 
          */
         grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        timer += Time.deltaTime;
+        timer %= 4.033f;
+        timerText.text = timer.ToString() + "s";
 
         if (grounded && velocity.y < 0f)
         {
@@ -58,7 +65,7 @@ public class PlayerController : MonoBehaviour
             {
                 moveSpeed = runSpeed;
                 stamina -= Time.deltaTime * staminaDrainRate;
-                Mathf.Clamp(stamina, 0f, maxStamina);
+                stamina = Mathf.Clamp(stamina, 0f, maxStamina);
                 staminaText.text = Math.Round(stamina, 1).ToString();
                 
             }
@@ -77,28 +84,15 @@ public class PlayerController : MonoBehaviour
             if (stamina < maxStamina)
             {
                 stamina += Time.deltaTime * staminaRegenRate;
-                Mathf.Clamp(stamina, 0f, maxStamina);
+                stamina = Mathf.Clamp(stamina, 0f, maxStamina);
                 staminaText.text = Math.Round(stamina, 1).ToString();
             }
-
-            if (stamina > maxStamina)
-            {
-                stamina = maxStamina;
-                staminaText.text = Math.Round(stamina, 1).ToString();
-            }
-
 
             if (exhausted > 0f)
             {
                 exhausted -= Time.deltaTime * staminaRegenRate;
-                Mathf.Clamp(exhausted, 0f, 3f);
+                exhausted = Mathf.Clamp(exhausted, 0f, 3f);
             }
-
-            if (exhausted < 0f)
-            {
-                exhausted = 0f;
-            }
-
         }
         
         
