@@ -28,7 +28,7 @@ public class DataCollection : MonoBehaviour
             {
                 xPos.Add(gameObject.transform.position.x);
                 float speed = Mathf.Abs(xPos[xPos.Count - 1] - xPos[xPos.Count - 2])/interval;
-                Debug.Log("id: " + (xPos.Count - 1) + " | " + speed + " m/s");
+                Debug.Log("id: " + (xPos.Count - 2) + " | " + speed + " m/s");
                 timer = 0f;
             }
         }

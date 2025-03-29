@@ -10,8 +10,6 @@ public class EnemyBehaviour : MonoBehaviour
 
     [SerializeField] private NavMeshAgent agent;
     private float moveSpeed = 3f;
-    private float minSpeed = 1f;
-    private float maxSpeed = 3f;
     private float tMove = 0f;
     [SerializeField] private AnimationCurve curveMove;
 
@@ -20,7 +18,7 @@ public class EnemyBehaviour : MonoBehaviour
     private EnemyStates state;
 
     private bool attacking;
-    private float damage = 15f;
+    private float damage = 30f;
 
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject model;
