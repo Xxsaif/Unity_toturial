@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sword : Weapon
+public class Axe : Weapon
 {
 
     private bool swinging;
@@ -21,7 +21,7 @@ public class Sword : Weapon
         inventoryScr = GameObject.FindWithTag("Player").GetComponent<Inventory>();
     }
 
-    
+
     void Update()
     {
         if (Input.GetKey(KeyCode.Mouse0) && !swinging)
@@ -29,7 +29,7 @@ public class Sword : Weapon
             StartCoroutine(Attack());
             animator.SetTrigger("Attack");
         }
-       
+
     }
 
     protected override IEnumerator Attack()
@@ -44,5 +44,5 @@ public class Sword : Weapon
         inventoryScr.canSwapItem = true;
     }
 
-    
+
 }

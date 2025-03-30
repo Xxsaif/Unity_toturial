@@ -14,6 +14,7 @@ public class Weapon : MonoBehaviour
     [HideInInspector] public float damage;
     [HideInInspector] public float knockbackMultiplier;
     [HideInInspector] public float knockbackDuration;
+    protected Inventory inventoryScr;
     void Start()
     {
         
