@@ -30,11 +30,14 @@ public class PlayerController : MonoBehaviour
 
     private float timer;
     [SerializeField] private TextMeshProUGUI timerText;
+
+    private Inventory inventoryScr;
     void Start()
     {
         controller = GetComponent<CharacterController>();
         grounded = true;
         moveSpeed = walkSpeed;
+        inventoryScr = GetComponent<Inventory>();
     }
 
     
@@ -53,29 +56,48 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = -3f;
         }
-        float hInput = Input.GetAxisRaw("Horizontal");
-        float vInput = Input.GetAxisRaw("Vertical");
 
-        Vector3 move = transform.right * hInput + transform.forward * vInput;
-        move.Normalize();
-        
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && exhausted == 0f)
+        if (!inventoryScr.inventoryActive)
         {
-            if (stamina > 0f)
+            float hInput = Input.GetAxisRaw("Horizontal");
+            float vInput = Input.GetAxisRaw("Vertical");
+
+            Vector3 move = transform.right * hInput + transform.forward * vInput;
+            move.Normalize();
+        
+            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && exhausted == 0f)
             {
-                moveSpeed = runSpeed;
-                stamina -= Time.deltaTime * staminaDrainRate;
-                stamina = Mathf.Clamp(stamina, 0f, maxStamina);
-                staminaText.text = Math.Round(stamina, 1).ToString();
+                if (stamina > 0f)
+                {
+                    moveSpeed = runSpeed;
+                    stamina -= Time.deltaTime * staminaDrainRate;
+                    stamina = Mathf.Clamp(stamina, 0f, maxStamina);
+                    staminaText.text = Math.Round(stamina, 1).ToString();
                 
+                }
+                if (Math.Round(stamina, 1) == 0f)
+                {
+                    moveSpeed = walkSpeed;
+                    exhausted = 3f;
+                }
             }
-            if (Math.Round(stamina, 1) == 0f)
+            if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKey(KeyCode.S) || Input.GetKeyUp(KeyCode.W))
             {
                 moveSpeed = walkSpeed;
-                exhausted = 3f;
             }
+
+            controller.Move(moveSpeed * Time.deltaTime * move);
+        
+
+            if (Input.GetKeyDown(KeyCode.Space) && grounded)
+            {
+                velocity.y = Mathf.Sqrt(-2f * jumpHeight * gravity);
+            }
+
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKey(KeyCode.S) || Input.GetKeyUp(KeyCode.W))
+        else if (inventoryScr.inventoryActive)
         {
             moveSpeed = walkSpeed;
         }
@@ -96,16 +118,6 @@ public class PlayerController : MonoBehaviour
         }
         
         
-        controller.Move(moveSpeed * Time.deltaTime * move);
-        
-
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
-        {
-            velocity.y = Mathf.Sqrt(-2f * jumpHeight * gravity);
-        }
-
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
 
 
         falling = velocity.y < -3f && !grounded;

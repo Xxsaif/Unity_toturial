@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public abstract class Weapon : MonoBehaviour
 {
     
     
@@ -15,6 +15,7 @@ public class Weapon : MonoBehaviour
     [HideInInspector] public float knockbackMultiplier;
     [HideInInspector] public float knockbackDuration;
     protected Inventory inventoryScr;
+    protected bool attacking;
     void Start()
     {
         
@@ -30,5 +31,5 @@ public class Weapon : MonoBehaviour
         yield return null;
     }
 
-    
+    protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !inventoryScr.inventoryActive;
 }

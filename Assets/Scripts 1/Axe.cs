@@ -6,13 +6,13 @@ using UnityEngine;
 public class Axe : Weapon
 {
 
-    private bool swinging;
+
     [SerializeField] private GameObject blade;
     [SerializeField] private Animator animator;
 
     void Start()
     {
-        swinging = false;
+        attacking = false;
         bladeCollider = blade.GetComponent<Collider>();
         bladeCollider.enabled = false;
         damage = 50f;
@@ -24,7 +24,7 @@ public class Axe : Weapon
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && !swinging)
+        if (CanAttack())
         {
             StartCoroutine(Attack());
             animator.SetTrigger("Attack");
@@ -35,12 +35,12 @@ public class Axe : Weapon
     protected override IEnumerator Attack()
     {
         inventoryScr.canSwapItem = false;
-        swinging = true;
+        attacking = true;
         bladeCollider.enabled = true;
         yield return new WaitForSeconds(2f);
         bladeCollider.enabled = false;
         enemiesHit.Clear();
-        swinging = false;
+        attacking = false;
         inventoryScr.canSwapItem = true;
     }
 
