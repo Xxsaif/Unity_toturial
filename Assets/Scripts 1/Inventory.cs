@@ -17,12 +17,13 @@ public class Inventory : MonoBehaviour
     private Color hotbarSlotActive = new Color(72f / 255f, 72f / 255f, 72f / 255f, 200f / 255f);
     private Color hotbarSlotInactive = new Color(72f / 255f, 72f / 255f, 72f / 255f, 100f / 255f);
     private bool hotbarActive;
-    [SerializeField] private GameObject inventoryScreen;
+    public GameObject inventoryScreen;
     [HideInInspector] public bool inventoryActive;
 
     [HideInInspector] public GameObject[,] inventoryItems = new GameObject[3, 6];
     [SerializeField] private GameObject testInvObj;
     [HideInInspector] public GameObject[,] inventorySlots = new GameObject[3, 6];
+    [HideInInspector] public GameObject[,] inventorySlotIcons = new GameObject[3, 6];
 
     void Start()
     {
@@ -38,6 +39,10 @@ public class Inventory : MonoBehaviour
                 if (inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject != null)
                 {
                     inventorySlots[y, x] = inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject;
+                    if (inventorySlots[y, x].transform.GetChild(0).gameObject != null)
+                    {
+                        inventorySlotIcons[y, x] = inventorySlots[y, x].transform.GetChild(0).gameObject;
+                    }
                 }
             }
         }
@@ -147,12 +152,12 @@ public class Inventory : MonoBehaviour
     {
         switch (hotbarItems[selected_id].gameObject.name)
         {
-            case "Sword_Parent":
+            case "Sword":
                 animator.SetBool("Sword_Equipped", true);
                 animator.SetBool("Axe_Equipped", false);
                 break;
 
-            case "Axe_Parent":
+            case "Axe":
                 animator.SetBool("Axe_Equipped", true);
                 animator.SetBool("Sword_Equipped", false);
                 break;
@@ -170,9 +175,9 @@ public class Inventory : MonoBehaviour
             {
                 for (int x = 0; x < inventoryItems.GetLength(1); x++)
                 {
-                    if (inventoryItems[x, y] == null)
+                    if (inventoryItems[y, x] == null)
                     {
-                        inventoryItems[x, y] = obj;
+                        inventoryItems[y, x] = obj;
                     }
                 }
             }
@@ -183,5 +188,19 @@ public class Inventory : MonoBehaviour
             inventorySlots[yPos, xPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
            
         }
+    }
+
+    public void RemoveItem(int xPos, int yPos)
+    {
+        inventoryItems[yPos, xPos] = null;
+        inventorySlots[yPos, xPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
+    }
+    
+
+    public void MoveItem((int x, int y) fromPos, (int x, int y) toPos)
+    {
+        //Debug.Log("From: " + fromPos + ", To: " + toPos);
+        AddItemToInventory(inventoryItems[fromPos.y, fromPos.x], toPos.x, toPos.y);
+        RemoveItem(fromPos.x, fromPos.y);
     }
 }
