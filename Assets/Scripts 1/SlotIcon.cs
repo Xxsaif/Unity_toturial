@@ -10,21 +10,36 @@ public class SlotIcon : MonoBehaviour
     private Vector3 startPos;
     [HideInInspector] public bool isBeingDragged;
     private SlotManager slotManager;
-    private (int x, int y) slotPos = (-1, -1);
+    private (int x, int y) inventorySlotPos = (-1, -1);
+    private int hotbarSlotPos = -1;
+    [HideInInspector] public Slot.SlotType type;
+    
     void Start()
     {
         startPos = transform.localPosition;
         slotManager = GameObject.Find("Inventory").GetComponent<SlotManager>();
+        type = gameObject.transform.parent.gameObject.GetComponent<Slot>().type;
         
     }
 
     public void Drag()
     {
-        if (slotPos == (-1, -1))
+        if (inventorySlotPos == (-1, -1) && type == Slot.SlotType.Inventory)
         {
-            slotPos = slotManager.FindSlotPosition(gameObject.transform.parent.gameObject);
+            inventorySlotPos = slotManager.FindInventorySlotPosition(gameObject.transform.parent.gameObject);
         }
-        if (slotManager.inventoryScr.inventoryItems[slotPos.y, slotPos.x] != null)
+        else if (hotbarSlotPos == -1 && type == Slot.SlotType.Hotbar)
+        {
+            hotbarSlotPos = slotManager.FindHotbarSlotPosition(gameObject.transform.parent.gameObject);
+        }
+
+        if (type == Slot.SlotType.Inventory && slotManager.inventoryScr.inventoryItems[inventorySlotPos.y, inventorySlotPos.x] != null)
+        {
+            transform.position = Input.mousePosition;
+            isBeingDragged = true;
+            gameObject.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+        }
+        else if (type == Slot.SlotType.Hotbar && slotManager.inventoryScr.hotbarItems[hotbarSlotPos] != null)
         {
             transform.position = Input.mousePosition;
             isBeingDragged = true;
@@ -35,11 +50,18 @@ public class SlotIcon : MonoBehaviour
 
     public void EndDrag()
     {
-        if (slotManager.inventoryScr.inventoryItems[slotPos.y, slotPos.x] != null)
+        if (type == Slot.SlotType.Inventory && slotManager.inventoryScr.inventoryItems[inventorySlotPos.y, inventorySlotPos.x] != null)
         {
             transform.localPosition = startPos;
             isBeingDragged = false;
-            slotManager.TryMoveItem(gameObject.transform.parent.gameObject);
+            slotManager.TryMoveItem(gameObject.transform.parent.gameObject, type);
+            gameObject.GetComponent<TextMeshProUGUI>().raycastTarget = true;
+        }
+        else if (type == Slot.SlotType.Hotbar && slotManager.inventoryScr.hotbarItems[hotbarSlotPos] != null)
+        {
+            transform.localPosition = startPos;
+            isBeingDragged = false;
+            slotManager.TryMoveItem(gameObject.transform.parent.gameObject, type);
             gameObject.GetComponent<TextMeshProUGUI>().raycastTarget = true;
         }
     }
@@ -47,4 +69,6 @@ public class SlotIcon : MonoBehaviour
     {
         
     }
+
+    
 }
