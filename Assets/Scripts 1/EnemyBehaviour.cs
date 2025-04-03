@@ -49,7 +49,7 @@ public class EnemyBehaviour : MonoBehaviour
         {
             agent.SetDestination(playerPosition);
         }
-        transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
+        //transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
 
         //Debug.Log("InRange: " + (Vector3.Distance(transform.position, playerPosition) <= agent.stoppingDistance).ToString() + ", IsAttack: "  + animator.GetCurrentAnimatorStateInfo(0).IsName("zombie_attack").ToString() + ", " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
         if (Vector3.Distance(transform.position, playerPosition) <= agent.stoppingDistance)
@@ -78,9 +78,9 @@ public class EnemyBehaviour : MonoBehaviour
         }
         if (state == EnemyStates.Attacking && agent.isStopped)
         {
-            if (!attacking)
+            if (!Attacking() && !attacking)
             {
-                Invoke(nameof(Attack), 2.63f);
+                Invoke(nameof(Attack), 1f);
                 AttackAni();
                 attacking = true;
             }
@@ -151,7 +151,7 @@ public class EnemyBehaviour : MonoBehaviour
         animator.SetTrigger("zombieAttack");
 
     }
-
+    public bool Attacking() => animator.GetCurrentAnimatorStateInfo(0).IsName("zombie_attack");
     private enum EnemyStates
     {
         Idle,

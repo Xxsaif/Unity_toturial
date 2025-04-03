@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 public class Inventory : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class Inventory : MonoBehaviour
     [HideInInspector] public GameObject[] hotbarSlots;
     [HideInInspector] public TextMeshProUGUI[] hotbarSlotQuantity;
 
+    [SerializeField] private TextMeshProUGUI interactionText;
+
     void Start()
     {
 
@@ -48,6 +51,7 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < hotbarSlots.Length; i++)
         {
             hotbarSlots[i] = hotbar.transform.GetChild(i).gameObject;
+            hotbarSlots[i].GetComponent<Slot>().slotHotbarPos = i;
             hotbarSlotQuantity[i] = hotbarSlots[i].transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
         }
         inventoryScreen.SetActive(true);
@@ -58,6 +62,7 @@ public class Inventory : MonoBehaviour
                 if (inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject != null)
                 {
                     inventorySlots[y, x] = inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject;
+                    inventorySlots[y, x].GetComponent<Slot>().slotInventoryPos = (x, y);
                     if (inventorySlots[y, x].transform.GetChild(0).gameObject != null)
                     {
                         inventorySlotIcons[y, x] = inventorySlots[y, x].transform.GetChild(0).gameObject;
@@ -85,46 +90,12 @@ public class Inventory : MonoBehaviour
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-
-                if (hotbarActive)
-                {
-                    if (canSwapItem)
-                    {
-                        if (item_selected)
-                        {
-                            hotbarItems[selected_id].SetActive(false);
-                            item_selected = false;
-                            animator.SetBool("Sword_Equipped", false);
-                            animator.SetBool("Axe_Equipped", false);
-                        }
-                        hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
-                        canSwapItem = false;
-                        hotbarActive = false;
-                        hotbarWasActive = true;
-                    }
-
-                }
-
             }
 
             else if (!inventoryScreen.activeSelf)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-
-                if (hotbarWasActive)
-                {
-                    hotbarActive = true;
-                    if (hotbarItems[selected_id] != null)
-                    {
-                        hotbarItems[selected_id].SetActive(true);
-                        item_selected = true;
-                    }
-                    hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotActive;
-                    canSwapItem = true;
-                    UpdateAnimator();
-                    hotbarWasActive = false;
-                }
             }
         }
 
@@ -199,6 +170,32 @@ public class Inventory : MonoBehaviour
         
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<DroppedItem>(out _))
+        {
+            interactionText.text = "Press F to\nPick up " + other.GetComponent<DroppedItem>().itemName;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.TryGetComponent<DroppedItem>(out _))
+        {
+            interactionText.text = string.Empty;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.TryGetComponent<DroppedItem>(out _))
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                other.GetComponent<DroppedItem>().PickUp();
+                interactionText.text = string.Empty;
+            }
+        }
+    }
     private void UpdateAnimator()
     {
         if (hotbarItems[selected_id] != null)
@@ -236,7 +233,6 @@ public class Inventory : MonoBehaviour
             inventoryItemQuantity[yPos, xPos] = quantity;
             inventorySlotQuantity[yPos, xPos].text = quantity.ToString();
         }
-        
     }
 
     public void AddItemToHotbar(GameObject obj, int quantity, int pos)
@@ -247,7 +243,51 @@ public class Inventory : MonoBehaviour
             hotbarSlots[pos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
             hotbarItemQuantity[pos] = quantity;
             hotbarSlotQuantity[pos].text = quantity.ToString();
+            if (hotbarActive && pos == selected_id && hotbarItems[selected_id] != null)
+            {
+                hotbarItems[selected_id].SetActive(true);
+                item_selected = true;
+                UpdateAnimator();
+            }
         }
+    }
+
+    public void AddItem(GameObject obj, int quantity)
+    {
+        for (int i = 0; i < hotbarItems.Length; i++)
+        {
+            if (hotbarItems[i] == null)
+            {
+                hotbarItems[i] = obj;
+                hotbarSlots[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
+                hotbarItemQuantity[i] = quantity;
+                hotbarSlotQuantity[i].text = quantity.ToString();
+                if (hotbarActive && hotbarItems[selected_id] != null)
+                {
+                    hotbarItems[selected_id].SetActive(true);
+                    item_selected = true;
+                    UpdateAnimator();
+                }
+                return;
+            }
+        }
+
+        for (int y = 0; y < inventoryItems.GetLength(0); y++)
+        {
+            for (int x = 0; x < inventoryItems.GetLength(1); x++)
+            {
+                if (inventoryItems[y, x] == null)
+                {
+                    inventoryItems[y, x] = obj;
+                    inventorySlots[y, x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
+                    inventoryItemQuantity[y, x] = quantity;
+                    inventorySlotQuantity[y, x].text = quantity.ToString();
+                    return;
+                }
+            }
+        }
+
+        
     }
 
     public void RemoveItemFromInventory(int xPos, int yPos)
@@ -259,10 +299,20 @@ public class Inventory : MonoBehaviour
     }
     public void RemoveItemFromHotbar(int pos)
     {
+
+        if (pos == selected_id)
+        {
+            hotbarItems[pos].SetActive(false);
+        }
         hotbarItems[pos] = null;
         hotbarSlots[pos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
         hotbarItemQuantity[pos] = 0;
         hotbarSlotQuantity[pos].text = string.Empty;
+        if (hotbarActive && pos == selected_id)
+        {
+            item_selected = false;
+            UpdateAnimator();
+        }
     }
 
     public void MoveItem((int x, int y) fromPos, (int x, int y) toPos)

@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class SlotIcon : MonoBehaviour
 {
@@ -17,7 +18,14 @@ public class SlotIcon : MonoBehaviour
     void Start()
     {
         startPos = transform.localPosition;
-        slotManager = GameObject.Find("Inventory").GetComponent<SlotManager>();
+        for (int i = 0; i < GameObject.Find("Hud").transform.childCount; i++)
+        {
+            if (GameObject.Find("Hud").transform.GetChild(i).gameObject.name == "Inventory")
+            {
+                slotManager = GameObject.Find("Hud").transform.GetChild(i).gameObject.GetComponent<SlotManager>();
+            }
+        }
+        
         type = gameObject.transform.parent.gameObject.GetComponent<Slot>().type;
         
     }
@@ -26,11 +34,11 @@ public class SlotIcon : MonoBehaviour
     {
         if (inventorySlotPos == (-1, -1) && type == Slot.SlotType.Inventory)
         {
-            inventorySlotPos = slotManager.FindInventorySlotPosition(gameObject.transform.parent.gameObject);
+            inventorySlotPos = gameObject.transform.parent.gameObject.GetComponent<Slot>().slotInventoryPos;
         }
         else if (hotbarSlotPos == -1 && type == Slot.SlotType.Hotbar)
         {
-            hotbarSlotPos = slotManager.FindHotbarSlotPosition(gameObject.transform.parent.gameObject);
+            hotbarSlotPos = gameObject.transform.parent.gameObject.GetComponent<Slot>().slotHotbarPos;
         }
 
         if (type == Slot.SlotType.Inventory && slotManager.inventoryScr.inventoryItems[inventorySlotPos.y, inventorySlotPos.x] != null)
