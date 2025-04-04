@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Mono.Cecil;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,9 +39,10 @@ public class Inventory : MonoBehaviour
     private bool canScroll;
 
     private readonly KeyCode[] numberKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0 };
+
+    public int itemStackLimit;
     void Start()
     {
-
         hotbarItems = new GameObject[10];
         hotbarItemQuantity = new int[10];
         hotbarSlotQuantity = new TextMeshProUGUI[10];
@@ -77,7 +79,8 @@ public class Inventory : MonoBehaviour
             }
         }
         inventoryScreen.SetActive(false);
-        AddItem(testInvObj, 3);
+        AddItem(testInvObj, 2);
+        AddItem(testInvObj, 500);
         AddItem(testHotbarObj, 2);
     }
 
@@ -219,27 +222,32 @@ public class Inventory : MonoBehaviour
     
 
 
-    public void AddItemToInventory((int x, int y) fromPos, (int x, int y) toPos, int quantity)
+    public int AddItemToInventory((int x, int y) fromPos, (int x, int y) toPos, int quantity)
     {
         inventoryItems[toPos.y, toPos.x] = inventoryItems[fromPos.y, fromPos.x];
         inventorySlots[toPos.y, toPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryItems[fromPos.y, fromPos.x].name;
-        inventoryItemQuantity[toPos.y, toPos.x] += quantity;
+        int originalQuantity = inventoryItemQuantity[toPos.y, toPos.x];
+        inventoryItemQuantity[toPos.y, toPos.x] = Mathf.Clamp(quantity + inventoryItemQuantity[toPos.y, toPos.x], 0, itemStackLimit);
         inventorySlotQuantity[toPos.y, toPos.x].text = inventoryItemQuantity[toPos.y, toPos.x].ToString();
+        return inventoryItemQuantity[toPos.y, toPos.x] < itemStackLimit ? quantity : itemStackLimit - originalQuantity;
     }
 
-    public void AddItemToInventory(int fromPos, (int x, int y) toPos, int quantity)
+    public int AddItemToInventory(int fromPos, (int x, int y) toPos, int quantity)
     {
         inventoryItems[toPos.y, toPos.x] = hotbarItems[fromPos];
         inventorySlots[toPos.y, toPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = hotbarItems[fromPos].name;
-        inventoryItemQuantity[toPos.y, toPos.x] += quantity;
+        int originalQuantity = inventoryItemQuantity[toPos.y, toPos.x];
+        inventoryItemQuantity[toPos.y, toPos.x] = Mathf.Clamp(quantity + inventoryItemQuantity[toPos.y, toPos.x], 0, itemStackLimit);
         inventorySlotQuantity[toPos.y, toPos.x].text = inventoryItemQuantity[toPos.y, toPos.x].ToString();
+        return inventoryItemQuantity[toPos.y, toPos.x] < itemStackLimit ? quantity : itemStackLimit - originalQuantity;
     }
 
-    public void AddItemToHotbar(int fromPos, int toPos, int quantity)
+    public int AddItemToHotbar(int fromPos, int toPos, int quantity)
     {
         hotbarItems[toPos] = hotbarItems[fromPos];
         hotbarSlots[toPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = hotbarItems[fromPos].name;
-        hotbarItemQuantity[toPos] += quantity;
+        int originalQuantity = hotbarItemQuantity[toPos];
+        hotbarItemQuantity[toPos] = Mathf.Clamp(quantity + hotbarItemQuantity[toPos], 0, itemStackLimit);
         hotbarSlotQuantity[toPos].text = hotbarItemQuantity[toPos].ToString();
         if (hotbarActive && toPos == selected_id && hotbarItems[selected_id] != null)
         {
@@ -247,12 +255,14 @@ public class Inventory : MonoBehaviour
             item_selected = true;
             UpdateAnimator();
         }
+        return hotbarItemQuantity[toPos] < itemStackLimit ? quantity : itemStackLimit - originalQuantity;
     }
-    public void AddItemToHotbar((int x, int y) fromPos, int toPos, int quantity)
+    public int AddItemToHotbar((int x, int y) fromPos, int toPos, int quantity)
     {
         hotbarItems[toPos] = inventoryItems[fromPos.y, fromPos.x];
         hotbarSlots[toPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryItems[fromPos.y, fromPos.x].name;
-        hotbarItemQuantity[toPos] += quantity;
+        int originalQuantity = hotbarItemQuantity[toPos];
+        hotbarItemQuantity[toPos] = Mathf.Clamp(quantity + hotbarItemQuantity[toPos], 0, itemStackLimit);
         hotbarSlotQuantity[toPos].text = hotbarItemQuantity[toPos].ToString();
         if (hotbarActive && toPos == selected_id && hotbarItems[selected_id] != null)
         {
@@ -260,25 +270,42 @@ public class Inventory : MonoBehaviour
             item_selected = true;
             UpdateAnimator();
         }
+        return hotbarItemQuantity[toPos] < itemStackLimit ? quantity : itemStackLimit - originalQuantity;
     }
 
-    public void AddItem(GameObject obj, int quantity)
+    public void AddItem(GameObject obj, int q)
     {
+        int quantity = q;
         for (int i = 0; i < hotbarItems.Length; i++)
         {
-            if (hotbarItems[i] == null)
+            if (hotbarItems[i] == obj)
+            {
+                int originalQuantity = hotbarItemQuantity[i];
+                hotbarItemQuantity[i] = Mathf.Clamp(hotbarItemQuantity[i]+quantity, 0, itemStackLimit);
+                quantity = originalQuantity + quantity - Mathf.Clamp(hotbarItemQuantity[i] + quantity, 0, itemStackLimit);
+                hotbarSlotQuantity[i].text = hotbarItemQuantity[i].ToString();
+                if (quantity == 0)
+                {
+                    return;
+                }
+            }
+            else if (hotbarItems[i] == null)
             {
                 hotbarItems[i] = obj;
                 hotbarSlots[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
-                hotbarItemQuantity[i] = quantity;
-                hotbarSlotQuantity[i].text = quantity.ToString();
+                hotbarItemQuantity[i] += Mathf.Clamp(quantity, 0, itemStackLimit);
+                quantity -= Mathf.Clamp(quantity, 0, itemStackLimit);
+                hotbarSlotQuantity[i].text = hotbarItemQuantity[i].ToString();
                 if (hotbarActive && hotbarItems[selected_id] != null)
                 {
                     hotbarItems[selected_id].SetActive(true);
                     item_selected = true;
                     UpdateAnimator();
                 }
-                return;
+                if (quantity == 0)
+                {
+                    return;
+                }
             }
         }
 
@@ -286,13 +313,28 @@ public class Inventory : MonoBehaviour
         {
             for (int x = 0; x < inventoryItems.GetLength(1); x++)
             {
+                if (inventoryItems[y, x] == obj)
+                {
+                    int originalQuantity = inventoryItemQuantity[y, x];
+                    inventoryItemQuantity[y, x] = Mathf.Clamp(inventoryItemQuantity[y, x] + quantity, 0, itemStackLimit);
+                    quantity = originalQuantity + quantity - Mathf.Clamp(inventoryItemQuantity[y, x] + quantity, 0, itemStackLimit);
+                    inventorySlotQuantity[y, x].text = inventoryItemQuantity[y, x].ToString();
+                    if (quantity == 0)
+                    {
+                        return;
+                    }
+                }
                 if (inventoryItems[y, x] == null)
                 {
                     inventoryItems[y, x] = obj;
                     inventorySlots[y, x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
-                    inventoryItemQuantity[y, x] = quantity;
-                    inventorySlotQuantity[y, x].text = quantity.ToString();
-                    return;
+                    inventoryItemQuantity[y, x] += Mathf.Clamp(quantity, 0, itemStackLimit);
+                    quantity -= Mathf.Clamp(quantity, 0, itemStackLimit);
+                    inventorySlotQuantity[y, x].text = inventoryItemQuantity[y, x].ToString();
+                    if (quantity == 0)
+                    {
+                        return;
+                    }
                 }
             }
         }
@@ -340,25 +382,29 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void MoveItem((int x, int y) fromPos, (int x, int y) toPos, int quantity)
+    public void MoveItem((int x, int y) fromPos, (int x, int y) toPos, int q)
     {
-        AddItemToInventory(fromPos, toPos, quantity);
+        int quantity = q;
+        quantity = AddItemToInventory(fromPos, toPos, quantity);
         RemoveItemFromInventory(fromPos, quantity);
     }
-    public void MoveItem(int fromPos, (int x, int y) toPos, int quantity)
+    public void MoveItem(int fromPos, (int x, int y) toPos, int q)
     {
-        AddItemToInventory(fromPos, toPos, quantity);
+        int quantity = q;
+        quantity = AddItemToInventory(fromPos, toPos, quantity);
         RemoveItemFromHotbar(fromPos, quantity);
     }
-    public void MoveItem(int fromPos, int toPos, int quantity)
+    public void MoveItem(int fromPos, int toPos, int q)
     {
-        AddItemToHotbar(fromPos, toPos, quantity);
+        int quantity = q;
+        quantity = AddItemToHotbar(fromPos, toPos, quantity);
         RemoveItemFromHotbar(fromPos, quantity);
     }
 
-    public void MoveItem((int x, int y) fromPos, int toPos, int quantity)
+    public void MoveItem((int x, int y) fromPos, int toPos, int q)
     {
-        AddItemToHotbar(fromPos, toPos, quantity);
+        int quantity = q;
+        quantity = AddItemToHotbar(fromPos, toPos, quantity);
         RemoveItemFromInventory(fromPos, quantity);
     }
 

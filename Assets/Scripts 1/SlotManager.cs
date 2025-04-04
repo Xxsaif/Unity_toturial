@@ -33,14 +33,14 @@ public class SlotManager : MonoBehaviour
                         switch (hoveredSlotScr.type)
                         {
                             case Slot.SlotType.Inventory:
-                                if (inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x])
+                                if ((inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x]) && inventoryScr.inventoryItemQuantity[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] != inventoryScr.itemStackLimit)
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotInventoryPos, quantity);
                                 }
                                 break;
 
                             case Slot.SlotType.Hotbar:
-                                if (inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x])
+                                if ((inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x]) && inventoryScr.hotbarItemQuantity[hoveredSlotScr.slotHotbarPos] != inventoryScr.itemStackLimit)
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotHotbarPos, quantity);
                                 }
@@ -52,14 +52,14 @@ public class SlotManager : MonoBehaviour
                         switch (hoveredSlotScr.type)
                         {
                             case Slot.SlotType.Inventory:
-                                if (inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x])
+                                if ((inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x]) && inventoryScr.inventoryItemQuantity[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] != inventoryScr.itemStackLimit)
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotInventoryPos, quantity);
                                 }
                                 break;
 
                             case Slot.SlotType.Hotbar:
-                                if (inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.hotbarItems[callerSlotScr.slotHotbarPos])
+                                if ((inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.hotbarItems[callerSlotScr.slotHotbarPos]) && inventoryScr.hotbarItemQuantity[hoveredSlotScr.slotHotbarPos] != inventoryScr.itemStackLimit)
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotHotbarPos, quantity);
                                 }
