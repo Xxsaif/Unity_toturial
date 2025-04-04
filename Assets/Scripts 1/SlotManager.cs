@@ -18,7 +18,7 @@ public class SlotManager : MonoBehaviour
         
     }
 
-    public void TryMoveItem(GameObject caller, Slot.SlotType type)
+    public void TryMoveItem(GameObject caller, Slot.SlotType type, int quantity)
     {
         
         if (hoveredSlot != null)
@@ -33,16 +33,16 @@ public class SlotManager : MonoBehaviour
                         switch (hoveredSlotScr.type)
                         {
                             case Slot.SlotType.Inventory:
-                                if (inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null)
+                                if (inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x])
                                 {
-                                    inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotInventoryPos);
+                                    inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotInventoryPos, quantity);
                                 }
                                 break;
 
                             case Slot.SlotType.Hotbar:
-                                if (inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null)
+                                if (inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x])
                                 {
-                                    inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotHotbarPos);
+                                    inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotHotbarPos, quantity);
                                 }
                                 break;
                         }
@@ -52,16 +52,16 @@ public class SlotManager : MonoBehaviour
                         switch (hoveredSlotScr.type)
                         {
                             case Slot.SlotType.Inventory:
-                                if (inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null)
+                                if (inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x])
                                 {
-                                    inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotInventoryPos);
+                                    inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotInventoryPos, quantity);
                                 }
                                 break;
 
                             case Slot.SlotType.Hotbar:
-                                if (inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null)
+                                if (inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.hotbarItems[callerSlotScr.slotHotbarPos])
                                 {
-                                    inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotHotbarPos);
+                                    inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotHotbarPos, quantity);
                                 }
                                 break;
                         }

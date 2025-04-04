@@ -14,6 +14,7 @@ public class SlotIcon : MonoBehaviour
     private (int x, int y) inventorySlotPos = (-1, -1);
     private int hotbarSlotPos = -1;
     [HideInInspector] public Slot.SlotType type;
+    private KeyCode mousekey;
     
     void Start()
     {
@@ -30,6 +31,11 @@ public class SlotIcon : MonoBehaviour
         
     }
 
+    public void Click()
+    {
+        mousekey = Input.GetKey(KeyCode.Mouse0) ? KeyCode.Mouse0 : Input.GetKey(KeyCode.Mouse1) ? KeyCode.Mouse1 : KeyCode.None;
+
+    }
     public void Drag()
     {
         if (inventorySlotPos == (-1, -1) && type == Slot.SlotType.Inventory)
@@ -62,14 +68,14 @@ public class SlotIcon : MonoBehaviour
         {
             transform.localPosition = startPos;
             isBeingDragged = false;
-            slotManager.TryMoveItem(gameObject.transform.parent.gameObject, type);
+            slotManager.TryMoveItem(gameObject.transform.parent.gameObject, type, mousekey == KeyCode.Mouse0 ? 1 : mousekey == KeyCode.Mouse1 ? slotManager.inventoryScr.inventoryItemQuantity[inventorySlotPos.y, inventorySlotPos.x] : 0);
             gameObject.GetComponent<TextMeshProUGUI>().raycastTarget = true;
         }
         else if (type == Slot.SlotType.Hotbar && slotManager.inventoryScr.hotbarItems[hotbarSlotPos] != null)
         {
             transform.localPosition = startPos;
             isBeingDragged = false;
-            slotManager.TryMoveItem(gameObject.transform.parent.gameObject, type);
+            slotManager.TryMoveItem(gameObject.transform.parent.gameObject, type, mousekey == KeyCode.Mouse0 ? 1 : mousekey == KeyCode.Mouse1 ? slotManager.inventoryScr.hotbarItemQuantity[hotbarSlotPos] : 0);
             gameObject.GetComponent<TextMeshProUGUI>().raycastTarget = true;
         }
     }

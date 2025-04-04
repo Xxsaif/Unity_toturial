@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -14,10 +15,9 @@ public class Inventory : MonoBehaviour
     private bool item_selected;
     [SerializeField] private Animator animator;
     public bool canSwapItem;
-    private Color hotbarSlotActive = new Color(72f / 255f, 72f / 255f, 72f / 255f, 200f / 255f);
-    private Color hotbarSlotInactive = new Color(72f / 255f, 72f / 255f, 72f / 255f, 100f / 255f);
+    private readonly Color hotbarSlotActive = new(72f / 255f, 72f / 255f, 72f / 255f, 200f / 255f);
+    private readonly Color hotbarSlotInactive = new(72f / 255f, 72f / 255f, 72f / 255f, 100f / 255f);
     private bool hotbarActive;
-    private bool hotbarWasActive;
     public GameObject inventoryScreen;
     [HideInInspector] public bool inventoryActive;
 
@@ -35,7 +35,9 @@ public class Inventory : MonoBehaviour
     [HideInInspector] public TextMeshProUGUI[] hotbarSlotQuantity;
 
     [SerializeField] private TextMeshProUGUI interactionText;
+    private bool canScroll;
 
+    private readonly KeyCode[] numberKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0 };
     void Start()
     {
 
@@ -46,7 +48,7 @@ public class Inventory : MonoBehaviour
         item_selected = false;
         canSwapItem = false;
         hotbarActive = false;
-        hotbarWasActive = false;
+        canScroll = true;
         GameObject hotbar = GameObject.Find("Hotbar");
         for (int i = 0; i < hotbarSlots.Length; i++)
         {
@@ -75,8 +77,8 @@ public class Inventory : MonoBehaviour
             }
         }
         inventoryScreen.SetActive(false);
-        AddItemToInventory(testInvObj, 3, 0, 0);
-        AddItemToHotbar(testHotbarObj, 2, 0);
+        AddItem(testInvObj, 3);
+        AddItem(testHotbarObj, 2);
     }
 
     
@@ -103,29 +105,22 @@ public class Inventory : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C))
             {
+                StartCoroutine(Scroll(Input.GetKeyDown(KeyCode.Z) ? 1 : -1));
+            }
 
-                if (item_selected)
+            if (Input.mouseScrollDelta.y != 0 && canScroll)
+            {
+                canScroll = false;
+                StartCoroutine(Scroll((int)Input.mouseScrollDelta.y));
+            }
+            if (Input.anyKeyDown)
+            {
+                for (int i = 0; i < numberKeys.Length; i++)
                 {
-                    hotbarItems[selected_id].SetActive(false);
-                }
-
-                hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
-                selected_id = Input.GetKeyDown(KeyCode.C) ? selected_id + 1 : selected_id - 1;
-                selected_id = selected_id > 9 ? 0 : selected_id;
-                selected_id = selected_id < 0 ? 9 : selected_id;
-
-                hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotActive;
-                if (ItemSelected())
-                {
-                    hotbarItems[selected_id].SetActive(true);
-                    item_selected = true;
-                    UpdateAnimator();
-                }
-                else
-                {
-                    item_selected = false;
-                    animator.SetBool("Sword_Equipped", false);
-                    animator.SetBool("Axe_Equipped", false);
+                    if (Input.GetKeyDown(numberKeys[i]))
+                    {
+                        StartCoroutine(Scroll(selected_id - i));
+                    }
                 }
             }
         }
@@ -222,33 +217,48 @@ public class Inventory : MonoBehaviour
     }
 
     
-    private bool ItemSelected() => hotbarItems[selected_id] != null;
 
-    public void AddItemToInventory(GameObject obj, int quantity, int xPos, int yPos)
+
+    public void AddItemToInventory((int x, int y) fromPos, (int x, int y) toPos, int quantity)
     {
-        if (xPos >= 0 && yPos >= 0 && xPos < inventoryItems.GetLength(1) && yPos < inventoryItems.GetLength(0) && inventoryItems[yPos, xPos] == null)
-        {
-            inventoryItems[yPos, xPos] = obj;
-            inventorySlots[yPos, xPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
-            inventoryItemQuantity[yPos, xPos] = quantity;
-            inventorySlotQuantity[yPos, xPos].text = quantity.ToString();
-        }
+        inventoryItems[toPos.y, toPos.x] = inventoryItems[fromPos.y, fromPos.x];
+        inventorySlots[toPos.y, toPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryItems[fromPos.y, fromPos.x].name;
+        inventoryItemQuantity[toPos.y, toPos.x] += quantity;
+        inventorySlotQuantity[toPos.y, toPos.x].text = inventoryItemQuantity[toPos.y, toPos.x].ToString();
     }
 
-    public void AddItemToHotbar(GameObject obj, int quantity, int pos)
+    public void AddItemToInventory(int fromPos, (int x, int y) toPos, int quantity)
     {
-        if (pos >= 0 && pos < hotbarSlots.Length && hotbarItems[pos] == null)
+        inventoryItems[toPos.y, toPos.x] = hotbarItems[fromPos];
+        inventorySlots[toPos.y, toPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = hotbarItems[fromPos].name;
+        inventoryItemQuantity[toPos.y, toPos.x] += quantity;
+        inventorySlotQuantity[toPos.y, toPos.x].text = inventoryItemQuantity[toPos.y, toPos.x].ToString();
+    }
+
+    public void AddItemToHotbar(int fromPos, int toPos, int quantity)
+    {
+        hotbarItems[toPos] = hotbarItems[fromPos];
+        hotbarSlots[toPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = hotbarItems[fromPos].name;
+        hotbarItemQuantity[toPos] += quantity;
+        hotbarSlotQuantity[toPos].text = hotbarItemQuantity[toPos].ToString();
+        if (hotbarActive && toPos == selected_id && hotbarItems[selected_id] != null)
         {
-            hotbarItems[pos] = obj;
-            hotbarSlots[pos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = obj.name;
-            hotbarItemQuantity[pos] = quantity;
-            hotbarSlotQuantity[pos].text = quantity.ToString();
-            if (hotbarActive && pos == selected_id && hotbarItems[selected_id] != null)
-            {
-                hotbarItems[selected_id].SetActive(true);
-                item_selected = true;
-                UpdateAnimator();
-            }
+            hotbarItems[selected_id].SetActive(true);
+            item_selected = true;
+            UpdateAnimator();
+        }
+    }
+    public void AddItemToHotbar((int x, int y) fromPos, int toPos, int quantity)
+    {
+        hotbarItems[toPos] = inventoryItems[fromPos.y, fromPos.x];
+        hotbarSlots[toPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryItems[fromPos.y, fromPos.x].name;
+        hotbarItemQuantity[toPos] += quantity;
+        hotbarSlotQuantity[toPos].text = hotbarItemQuantity[toPos].ToString();
+        if (hotbarActive && toPos == selected_id && hotbarItems[selected_id] != null)
+        {
+            hotbarItems[selected_id].SetActive(true);
+            item_selected = true;
+            UpdateAnimator();
         }
     }
 
@@ -290,50 +300,94 @@ public class Inventory : MonoBehaviour
         
     }
 
-    public void RemoveItemFromInventory(int xPos, int yPos)
-    {
-        inventoryItems[yPos, xPos] = null;
-        inventorySlots[yPos, xPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
-        inventoryItemQuantity[yPos, xPos] = 0;
-        inventorySlotQuantity[yPos, xPos].text = string.Empty;
-    }
-    public void RemoveItemFromHotbar(int pos)
+    public void RemoveItemFromInventory((int x, int y) fromPos, int quantity)
     {
 
-        if (pos == selected_id)
+        inventoryItemQuantity[fromPos.y, fromPos.x] -= quantity;
+        if (inventoryItemQuantity[fromPos.y, fromPos.x] == 0)
         {
-            hotbarItems[pos].SetActive(false);
+            inventoryItems[fromPos.y, fromPos.x] = null;
+            inventorySlots[fromPos.y, fromPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
+            inventorySlotQuantity[fromPos.y, fromPos.x].text = string.Empty;
         }
-        hotbarItems[pos] = null;
-        hotbarSlots[pos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
-        hotbarItemQuantity[pos] = 0;
-        hotbarSlotQuantity[pos].text = string.Empty;
-        if (hotbarActive && pos == selected_id)
+        else
         {
-            item_selected = false;
+            inventorySlotQuantity[fromPos.y, fromPos.x].text = inventoryItemQuantity[fromPos.y, fromPos.x].ToString();
+        }
+    }
+    public void RemoveItemFromHotbar(int pos, int quantity)
+    {
+
+        hotbarItemQuantity[pos] -= quantity;
+        if (hotbarItemQuantity[pos] == 0)
+        {
+            if (pos == selected_id)
+            {
+                hotbarItems[pos].SetActive(false);
+            }
+            hotbarItems[pos] = null;
+            hotbarSlots[pos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
+            hotbarSlotQuantity[pos].text = string.Empty;
+            if (hotbarActive && pos == selected_id)
+            {
+                item_selected = false;
+                UpdateAnimator();
+            }
+        }
+        else
+        {
+            hotbarSlotQuantity[pos].text = hotbarItemQuantity[pos].ToString(); 
+        }
+    }
+
+    public void MoveItem((int x, int y) fromPos, (int x, int y) toPos, int quantity)
+    {
+        AddItemToInventory(fromPos, toPos, quantity);
+        RemoveItemFromInventory(fromPos, quantity);
+    }
+    public void MoveItem(int fromPos, (int x, int y) toPos, int quantity)
+    {
+        AddItemToInventory(fromPos, toPos, quantity);
+        RemoveItemFromHotbar(fromPos, quantity);
+    }
+    public void MoveItem(int fromPos, int toPos, int quantity)
+    {
+        AddItemToHotbar(fromPos, toPos, quantity);
+        RemoveItemFromHotbar(fromPos, quantity);
+    }
+
+    public void MoveItem((int x, int y) fromPos, int toPos, int quantity)
+    {
+        AddItemToHotbar(fromPos, toPos, quantity);
+        RemoveItemFromInventory(fromPos, quantity);
+    }
+
+    IEnumerator Scroll(int direction)
+    {
+        if (item_selected)
+        {
+            hotbarItems[selected_id].SetActive(false);
+        }
+        hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
+
+        selected_id -= direction;
+        selected_id = selected_id > 9 ? selected_id - 10 : selected_id;
+        selected_id = selected_id < 0 ? selected_id + 10 : selected_id;
+
+        hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotActive;
+        if (hotbarItems[selected_id] != null)
+        {
+            hotbarItems[selected_id].SetActive(true);
+            item_selected = true;
             UpdateAnimator();
         }
-    }
-
-    public void MoveItem((int x, int y) fromPos, (int x, int y) toPos)
-    {
-        AddItemToInventory(inventoryItems[fromPos.y, fromPos.x], inventoryItemQuantity[fromPos.y, fromPos.x], toPos.x, toPos.y);
-        RemoveItemFromInventory(fromPos.x, fromPos.y);
-    }
-    public void MoveItem(int fromPos, (int x, int y) toPos)
-    {
-        AddItemToInventory(hotbarItems[fromPos], hotbarItemQuantity[fromPos], toPos.x, toPos.y);
-        RemoveItemFromHotbar(fromPos);
-    }
-    public void MoveItem(int fromPos, int toPos)
-    {
-        AddItemToHotbar(hotbarItems[fromPos], hotbarItemQuantity[fromPos], toPos);
-        RemoveItemFromHotbar(fromPos);
-    }
-
-    public void MoveItem((int x, int y) fromPos, int toPos)
-    {
-        AddItemToHotbar(inventoryItems[fromPos.y, fromPos.x], inventoryItemQuantity[fromPos.y, fromPos.x], toPos);
-        RemoveItemFromInventory(fromPos.x, fromPos.y);
+        else
+        {
+            item_selected = false;
+            animator.SetBool("Sword_Equipped", false);
+            animator.SetBool("Axe_Equipped", false);
+        }
+        yield return new WaitForSeconds(0.025f);
+        canScroll = true;
     }
 }
