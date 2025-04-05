@@ -2059,9 +2059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemiesHit: []
-  damage: 50
-  knockbackMultiplier: 5
-  knockbackDuration: 0.25
+  weaponData: {fileID: 11400000, guid: 30606482e9acff34d8bd8525b36ac6ff, type: 2}
   blade: {fileID: 1364955980}
   animator: {fileID: 2929119098601499465}
 --- !u!1 &328061999
@@ -6481,9 +6479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemiesHit: []
-  damage: 0
-  knockbackMultiplier: 0
-  knockbackDuration: 0
+  weaponData: {fileID: 11400000, guid: 72bf0cb8a75a1e4468cf235dd8bd124e, type: 2}
   blade: {fileID: 1574129223}
   animator: {fileID: 2929119098601499465}
 --- !u!1 &897595303
@@ -9557,8 +9553,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23561856043178c40991b28fffdb97d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 0
-  itemName: 
+  type: 0
+  quantity: 20
 --- !u!4 &1232533309
 Transform:
   m_ObjectHideFlags: 0
@@ -15378,8 +15374,6 @@ MonoBehaviour:
   inventoryActive: 0
   testInvObj: {fileID: 897431811}
   testHotbarObj: {fileID: 314706709}
-  hotbarItems: []
-  hotbarItemQuantity: 
   hotbarSlots:
   - {fileID: 0}
   - {fileID: 0}
@@ -15392,6 +15386,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   hotbarSlotQuantity: []
+  inventoryData: {fileID: 11400000, guid: 7d41828a39f3c694b834cda01c13c475, type: 2}
   interactionText: {fileID: 745465515}
   itemStackLimit: 32
 --- !u!135 &1848972431

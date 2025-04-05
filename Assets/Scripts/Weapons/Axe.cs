@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sword : Weapon
+public class Axe : Weapon
 {
 
-    
+
     [SerializeField] private GameObject blade;
     [SerializeField] private Animator animator;
 
@@ -15,13 +15,10 @@ public class Sword : Weapon
         attacking = false;
         bladeCollider = blade.GetComponent<Collider>();
         bladeCollider.enabled = false;
-        damage = 50f;
-        knockbackMultiplier = 5f;
-        knockbackDuration = 0.25f;
         inventoryScr = GameObject.FindWithTag("Player").GetComponent<Inventory>();
     }
 
-    
+
     void Update()
     {
         if (CanAttack())
@@ -29,7 +26,7 @@ public class Sword : Weapon
             StartCoroutine(Attack());
             animator.SetTrigger("Attack");
         }
-       
+
     }
 
     protected override IEnumerator Attack()
@@ -44,5 +41,5 @@ public class Sword : Weapon
         inventoryScr.canSwapItem = true;
     }
 
-    
+
 }

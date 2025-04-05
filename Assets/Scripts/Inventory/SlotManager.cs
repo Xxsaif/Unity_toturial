@@ -20,7 +20,7 @@ public class SlotManager : MonoBehaviour
 
     public void TryMoveItem(GameObject caller, Slot.SlotType type, int quantity)
     {
-        
+
         if (hoveredSlot != null)
         {
             Slot hoveredSlotScr = hoveredSlot.GetComponent<Slot>();
@@ -33,14 +33,14 @@ public class SlotManager : MonoBehaviour
                         switch (hoveredSlotScr.type)
                         {
                             case Slot.SlotType.Inventory:
-                                if ((inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x]) && inventoryScr.inventoryItemQuantity[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] != inventoryScr.itemStackLimit)
+                                if ((inventoryScr.inventoryData.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryData.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x].itemType == inventoryScr.inventoryData.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x].itemType))
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotInventoryPos, quantity);
                                 }
                                 break;
 
                             case Slot.SlotType.Hotbar:
-                                if ((inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x]) && inventoryScr.hotbarItemQuantity[hoveredSlotScr.slotHotbarPos] != inventoryScr.itemStackLimit)
+                                if ((inventoryScr.inventoryData.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.inventoryData.hotbarItems[hoveredSlotScr.slotHotbarPos].itemType == inventoryScr.inventoryData.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x].itemType))
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotInventoryPos, hoveredSlotScr.slotHotbarPos, quantity);
                                 }
@@ -52,14 +52,14 @@ public class SlotManager : MonoBehaviour
                         switch (hoveredSlotScr.type)
                         {
                             case Slot.SlotType.Inventory:
-                                if ((inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == inventoryScr.inventoryItems[callerSlotScr.slotInventoryPos.y, callerSlotScr.slotInventoryPos.x]) && inventoryScr.inventoryItemQuantity[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] != inventoryScr.itemStackLimit)
+                                if ((inventoryScr.inventoryData.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x] == null || inventoryScr.inventoryData.inventoryItems[hoveredSlotScr.slotInventoryPos.y, hoveredSlotScr.slotInventoryPos.x].itemType == inventoryScr.inventoryData.hotbarItems[callerSlotScr.slotHotbarPos].itemType))
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotInventoryPos, quantity);
                                 }
                                 break;
 
                             case Slot.SlotType.Hotbar:
-                                if ((inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.hotbarItems[hoveredSlotScr.slotHotbarPos] == inventoryScr.hotbarItems[callerSlotScr.slotHotbarPos]) && inventoryScr.hotbarItemQuantity[hoveredSlotScr.slotHotbarPos] != inventoryScr.itemStackLimit)
+                                if ((inventoryScr.inventoryData.hotbarItems[hoveredSlotScr.slotHotbarPos] == null || inventoryScr.inventoryData.hotbarItems[hoveredSlotScr.slotHotbarPos].itemType == inventoryScr.inventoryData.hotbarItems[callerSlotScr.slotHotbarPos].itemType))
                                 {
                                     inventoryScr.MoveItem(callerSlotScr.slotHotbarPos, hoveredSlotScr.slotHotbarPos, quantity);
                                 }

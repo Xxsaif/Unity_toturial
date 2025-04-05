@@ -11,9 +11,7 @@ public abstract class Weapon : MonoBehaviour
     [HideInInspector] public List<GameObject> enemiesHit;
     protected Collider bladeCollider;
 
-    [HideInInspector] public float damage;
-    [HideInInspector] public float knockbackMultiplier;
-    [HideInInspector] public float knockbackDuration;
+    public WeaponData weaponData;
     protected Inventory inventoryScr;
     protected bool attacking;
     void Start()

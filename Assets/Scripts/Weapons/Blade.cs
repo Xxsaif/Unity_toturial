@@ -30,7 +30,7 @@ public class Blade : MonoBehaviour
             EnemyBehaviour enemy = other.GetComponent<EnemyBehaviour>();
             if (enemy != null)
             {
-                enemy.TakeDmg(weaponScr.damage);
+                enemy.TakeDmg(weaponScr.weaponData.damage);
                 StartCoroutine(Knockback(other.gameObject));
             }
             weaponScr.enemiesHit.Add(other.gameObject); // adds enemy to list of enemies hit to make sure that the same enemy can't be hit twice from the same attack
@@ -43,9 +43,9 @@ public class Blade : MonoBehaviour
         Vector3 forceDir = enemy.gameObject.transform.position - player.transform.position;
         forceDir = new Vector3(forceDir.x, 0f, forceDir.z);
         forceDir.Normalize();
-        forceDir *= weaponScr.knockbackMultiplier;
+        forceDir *= weaponScr.weaponData.knockbackMultiplier;
         enemyRB.AddForce(forceDir, ForceMode.Impulse);
-        yield return new WaitForSeconds(weaponScr.knockbackDuration);
+        yield return new WaitForSeconds(weaponScr.weaponData.knockbackDuration);
         //enemyRB.AddForce(-0.5f * forceDir, ForceMode.Impulse);
         enemyRB.linearVelocity = Vector3.zero;
 
