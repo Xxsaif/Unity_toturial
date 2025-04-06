@@ -17,9 +17,14 @@ public class PlayerHealth : MonoBehaviour
         
     }
 
-    public void TakeDamage(float dmg)
+    public void Heal(float amount)
     {
-        health -= dmg;
+        health += amount;
+        healthText.text = health.ToString() + "HP";
+    }
+    public void TakeDamage(float amount)
+    {
+        health -= amount;
         healthText.text = health.ToString() + "HP";
         if (health <= 0f)
         {

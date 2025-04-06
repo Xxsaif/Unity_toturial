@@ -2,12 +2,13 @@ using NUnit.Framework.Constraints;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
 
 public class Inventory : MonoBehaviour
 {
-    
-    private int selected_id;
+
+    [HideInInspector] public int selected_id;
     private bool item_selected;
     [SerializeField] private Animator animator;
     public bool canSwapItem;
@@ -17,12 +18,11 @@ public class Inventory : MonoBehaviour
     public GameObject inventoryScreen;
     [HideInInspector] public bool inventoryActive;
 
-    [SerializeField] private GameObject testInvObj;
-    [SerializeField] private GameObject testHotbarObj;
-    [HideInInspector] public GameObject[,] inventorySlots = new GameObject[3, 6];
-    [HideInInspector] public GameObject[,] inventorySlotIcons = new GameObject[3, 6];
+    [HideInInspector] public TextMeshProUGUI[,] inventorySlotIcons = new TextMeshProUGUI[3, 6];
     [HideInInspector] public TextMeshProUGUI[,] inventorySlotQuantity = new TextMeshProUGUI[3, 6];
-    [HideInInspector] public GameObject[] hotbarSlots;
+
+    [HideInInspector] public Image[] hotbarSlotImg;
+    [HideInInspector] public TextMeshProUGUI[] hotbarSlotIcons;
     [HideInInspector] public TextMeshProUGUI[] hotbarSlotQuantity;
 
     public InventoryData inventoryData;
@@ -37,34 +37,38 @@ public class Inventory : MonoBehaviour
     {
         inventoryData.hotbarItems = new Item[10];
         hotbarSlotQuantity = new TextMeshProUGUI[10];
-        hotbarSlots = new GameObject[10];
+        hotbarSlotIcons = new TextMeshProUGUI[10];
+        hotbarSlotImg = new Image[10];
         item_selected = false;
         canSwapItem = false;
         hotbarActive = false;
         canScroll = true;
         GameObject hotbar = GameObject.Find("Hotbar");
-        for (int i = 0; i < hotbarSlots.Length; i++)
+        for (int i = 0; i < hotbarSlotIcons.Length; i++)
         {
-            hotbarSlots[i] = hotbar.transform.GetChild(i).gameObject;
-            hotbarSlots[i].GetComponent<Slot>().slotHotbarPos = i;
-            hotbarSlotQuantity[i] = hotbarSlots[i].transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+            GameObject slot = hotbar.transform.GetChild(i).gameObject;
+            slot.GetComponent<Slot>().slotHotbarPos = i;
+
+            hotbarSlotImg[i] = slot.GetComponent<Image>();
+            hotbarSlotIcons[i] = slot.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+            hotbarSlotQuantity[i] = slot.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
         }
         inventoryScreen.SetActive(true);
-        for (int y = 0; y < inventorySlots.GetLength(0); y++)
+        for (int y = 0; y < inventorySlotIcons.GetLength(0); y++)
         {
-            for (int x = 0; x < inventorySlots.GetLength(1); x++)
+            for (int x = 0; x < inventorySlotIcons.GetLength(1); x++)
             {
                 if (inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject != null)
                 {
-                    inventorySlots[y, x] = inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject;
-                    inventorySlots[y, x].GetComponent<Slot>().slotInventoryPos = (x, y);
-                    if (inventorySlots[y, x].transform.GetChild(0).gameObject != null)
+                    GameObject slot = inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject;
+                    slot.GetComponent<Slot>().slotInventoryPos = (x, y);
+                    if (slot.transform.GetChild(0).gameObject != null)
                     {
-                        inventorySlotIcons[y, x] = inventorySlots[y, x].transform.GetChild(0).gameObject;
+                        inventorySlotIcons[y, x] = slot.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
                     }
-                    if (inventorySlots[y, x].transform.GetChild(1).gameObject != null)
+                    if (slot.transform.GetChild(1).gameObject != null)
                     {
-                        inventorySlotQuantity[y, x] = inventorySlots[y, x].transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+                        inventorySlotQuantity[y, x] = slot.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
                     }
                 }
             }
@@ -72,6 +76,7 @@ public class Inventory : MonoBehaviour
         inventoryScreen.SetActive(false);
         AddItem(Item.ItemType.Axe, 48);
         AddItem(Item.ItemType.Sword, 48);
+        AddItem(Item.ItemType.Medkit, 48);
     }
 
     
@@ -101,12 +106,12 @@ public class Inventory : MonoBehaviour
                 StartCoroutine(Scroll(Input.GetKeyDown(KeyCode.Z) ? 1 : -1));
             }
 
-            if (Input.mouseScrollDelta.y != 0 && canScroll)
+            else if (Input.mouseScrollDelta.y != 0 && canScroll)
             {
                 canScroll = false;
                 StartCoroutine(Scroll((int)Input.mouseScrollDelta.y));
             }
-            if (Input.anyKeyDown)
+            else if (Input.anyKeyDown)
             {
                 for (int i = 0; i < numberKeys.Length; i++)
                 {
@@ -129,7 +134,7 @@ public class Inventory : MonoBehaviour
                     inventoryData.hotbarItems[selected_id].gameObject.SetActive(true);
                     item_selected = true;
                 }
-                hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotActive;
+                hotbarSlotImg[selected_id].GetComponent<Slot>().image.color = hotbarSlotActive;
                 canSwapItem = true;
                 UpdateAnimator();
             }
@@ -140,11 +145,13 @@ public class Inventory : MonoBehaviour
                     if (item_selected)
                     {
                         inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
+                        
                         item_selected = false;
                         animator.SetBool("Sword_Equipped", false);
                         animator.SetBool("Axe_Equipped", false);
+                        animator.SetBool("Medkit_Equipped", false);
                     }
-                    hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
+                    hotbarSlotImg[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
                     canSwapItem = false;
                 }
                 else
@@ -188,15 +195,23 @@ public class Inventory : MonoBehaviour
     {
         if (inventoryData.hotbarItems[selected_id] != null)
         {
-            switch (inventoryData.hotbarItems[selected_id].Name)
+            switch (inventoryData.hotbarItems[selected_id].itemType)
             {
-                case "Sword":
+                case Item.ItemType.Sword:
                     animator.SetBool("Sword_Equipped", true);
                     animator.SetBool("Axe_Equipped", false);
+                    animator.SetBool("Medkit_Equipped", false);
                     break;
 
-                case "Axe":
+                case Item.ItemType.Axe:
                     animator.SetBool("Axe_Equipped", true);
+                    animator.SetBool("Sword_Equipped", false);
+                    animator.SetBool("Medkit_Equipped", false);
+                    break;
+
+                case Item.ItemType.Medkit:
+                    animator.SetBool("Medkit_Equipped", true);
+                    animator.SetBool("Axe_Equipped", false);
                     animator.SetBool("Sword_Equipped", false);
                     break;
             }
@@ -206,6 +221,7 @@ public class Inventory : MonoBehaviour
         {
             animator.SetBool("Axe_Equipped", false);
             animator.SetBool("Sword_Equipped", false);
+            animator.SetBool("Medkit_Equipped", false);
         }
     }
 
@@ -228,7 +244,7 @@ public class Inventory : MonoBehaviour
             else if (inventoryData.hotbarItems[i] == null)
             {
                 inventoryData.hotbarItems[i] = new Item(itemType, quantity);
-                hotbarSlots[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryData.hotbarItems[i].Name;
+                hotbarSlotIcons[i].text = inventoryData.hotbarItems[i].Name;
                 quantity -= Mathf.Clamp(quantity, 0, inventoryData.hotbarItems[i].stackLimit);
                 hotbarSlotQuantity[i].text = inventoryData.hotbarItems[i].quantity.ToString();
                 if (hotbarActive && inventoryData.hotbarItems[selected_id] != null)
@@ -262,7 +278,7 @@ public class Inventory : MonoBehaviour
                 if (inventoryData.inventoryItems[y, x] == null)
                 {
                     inventoryData.inventoryItems[y, x] = new Item(itemType, quantity);
-                    inventorySlots[y, x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryData.inventoryItems[y, x].Name;
+                    inventorySlotIcons[y, x].text = inventoryData.inventoryItems[y, x].Name;
                     quantity -= Mathf.Clamp(quantity, 0, itemStackLimit);
                     inventorySlotQuantity[y, x].text = inventoryData.inventoryItems[y, x].quantity.ToString();
                     if (quantity == 0)
@@ -355,14 +371,12 @@ public class Inventory : MonoBehaviour
         int quantity = q;
         if (inventoryData.inventoryItems[toPos.y, toPos.x] == null)
         {
-            // adding
             inventoryData.inventoryItems[toPos.y, toPos.x] = new Item(fromType, quantity);
-            inventorySlots[toPos.y, toPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryData.inventoryItems[toPos.y, toPos.x].Name;
+            inventorySlotIcons[toPos.y, toPos.x].text = inventoryData.inventoryItems[toPos.y, toPos.x].Name;
             inventorySlotQuantity[toPos.y, toPos.x].text = inventoryData.inventoryItems[toPos.y, toPos.x].quantity.ToString();
         }
         else if (fromType == inventoryData.inventoryItems[toPos.y, toPos.x].itemType)
         {
-            // adding
             if (inventoryData.inventoryItems[toPos.y, toPos.x].quantity + quantity >= inventoryData.inventoryItems[toPos.y, toPos.x].stackLimit)
             {
                 quantity = inventoryData.inventoryItems[toPos.y, toPos.x].stackLimit - inventoryData.inventoryItems[toPos.y, toPos.x].quantity;
@@ -379,7 +393,7 @@ public class Inventory : MonoBehaviour
         if (inventoryData.inventoryItems[fromPos.y, fromPos.x].quantity == 0)
         {
             inventoryData.inventoryItems[fromPos.y, fromPos.x] = null;
-            inventorySlots[fromPos.y, fromPos.x].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
+            inventorySlotIcons[fromPos.y, fromPos.x].text = string.Empty;
             inventorySlotQuantity[fromPos.y, fromPos.x].text = string.Empty;
         }
         else
@@ -393,7 +407,7 @@ public class Inventory : MonoBehaviour
         if (inventoryData.hotbarItems[toPos] == null)
         {
             inventoryData.hotbarItems[toPos] = new Item(fromType, quantity);
-            hotbarSlots[toPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = inventoryData.hotbarItems[toPos].Name;
+            hotbarSlotIcons[toPos].text = inventoryData.hotbarItems[toPos].Name;
             hotbarSlotQuantity[toPos].text = inventoryData.hotbarItems[toPos].quantity.ToString();
         }
         else if (fromType == inventoryData.hotbarItems[toPos].itemType)
@@ -427,7 +441,7 @@ public class Inventory : MonoBehaviour
             inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
         }
         inventoryData.hotbarItems[fromPos] = null;
-        hotbarSlots[fromPos].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = string.Empty;
+        hotbarSlotIcons[fromPos].text = string.Empty;
         hotbarSlotQuantity[fromPos].text = string.Empty;
         if (hotbarActive && fromPos == selected_id)
         {
@@ -440,27 +454,48 @@ public class Inventory : MonoBehaviour
         if (item_selected)
         {
             inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
+            //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
+            //{
+            //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
+            //}
         }
-        hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
+        hotbarSlotImg[selected_id].color = hotbarSlotInactive;
 
         selected_id -= direction;
         selected_id = selected_id > 9 ? selected_id - 10 : selected_id;
         selected_id = selected_id < 0 ? selected_id + 10 : selected_id;
 
-        hotbarSlots[selected_id].GetComponent<Slot>().image.color = hotbarSlotActive;
+        hotbarSlotImg[selected_id].color = hotbarSlotActive;
         if (inventoryData.hotbarItems[selected_id] != null)
         {
             inventoryData.hotbarItems[selected_id].gameObject.SetActive(true);
+            //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
+            //{
+            //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
+            //}
             item_selected = true;
             UpdateAnimator();
+            //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
+            //{
+            //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
+            //}
         }
         else
         {
             item_selected = false;
             animator.SetBool("Sword_Equipped", false);
             animator.SetBool("Axe_Equipped", false);
+            animator.SetBool("Medkit_Equipped", false);
         }
+        //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
+        //{
+        //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
+        //}
         yield return new WaitForSeconds(0.025f);
         canScroll = true;
+        //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
+        //{
+        //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
+        //}
     }
 }
