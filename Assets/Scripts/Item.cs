@@ -21,7 +21,7 @@ public class Item
     public enum ItemType
     {
         Sword,
-        Axe,
-        Medkit
+        Medkit,
+        Axe
     }
 }

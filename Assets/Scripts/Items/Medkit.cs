@@ -12,11 +12,13 @@ public class Medkit : MonoBehaviour
         GameObject player = GameObject.FindWithTag("Player");
         inventoryScr = player.GetComponent<Inventory>();
         playerHealthScr = player.GetComponent<PlayerHealth>();
+        Debug.Log((player != null) + ", " + inventoryScr.gameObject.name + ", " + playerHealthScr.gameObject.name);
     }
 
-    
+
     void Update()
     {
+        Debug.Log("trigger");
         if (CanUse())
         {
             StartCoroutine(Use());
