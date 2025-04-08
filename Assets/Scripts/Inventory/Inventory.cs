@@ -74,7 +74,7 @@ public class Inventory : MonoBehaviour
         inventoryScreen.SetActive(false);
         AddItem(Item.ItemType.Axe, 48);
         AddItem(Item.ItemType.Sword, 48);
-        AddItem(Item.ItemType.Medkit, 48);
+        
     }
 
     

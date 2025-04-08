@@ -15,7 +15,7 @@ public static class ItemManager
 
             case Item.ItemType.Axe:
                 gameObject = GetGameObject("Axe");
-                stackLimit = 32;
+                stackLimit = 16;
                 itemName = "Axe";
                 break;
 
