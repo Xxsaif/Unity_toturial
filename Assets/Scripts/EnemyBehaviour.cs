@@ -86,7 +86,7 @@ public class EnemyBehaviour : MonoBehaviour
             }
             if (model.transform.position.y != 0f)
             {
-                model.transform.position = new Vector3(model.transform.position.x, 0f, model.transform.position.z);
+                model.transform.localPosition = new Vector3(model.transform.localPosition.x, 0f, model.transform.localPosition.z);
             }
         }
     }

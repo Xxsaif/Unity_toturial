@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class ItemManager
+public static class ItemManager
 {
     public static void SelectData(Item.ItemType itemType, ref GameObject gameObject, ref int stackLimit, ref string itemName)
     {
@@ -15,7 +15,7 @@ public class ItemManager
 
             case Item.ItemType.Axe:
                 gameObject = GetGameObject("Axe");
-                stackLimit = 32;
+                stackLimit = 16;
                 itemName = "Axe";
                 break;
 
