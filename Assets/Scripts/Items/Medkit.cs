@@ -7,6 +7,8 @@ public class Medkit : MonoBehaviour
     private PlayerHealth playerHealthScr;
     [SerializeField] private Animator animator;
     private bool isUsing = false;
+    private float useTime;
+
     void Start()
     {
         GameObject player = GameObject.FindWithTag("Player");
@@ -18,24 +20,46 @@ public class Medkit : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("trigger");
+        if ( Input.GetKey(KeyCode.Mouse1) )
+        {
+            Debug.Log(!isUsing);
+        }
         if (CanUse())
         {
             StartCoroutine(Use());
             animator.SetTrigger("Use");
         }
+        /*
+        if( isUsing )
+        {
+            if(useTime + 1.667F < Time.time )
+            {
+                isUsing = false;
+                inventoryScr.canSwapItem = true;
+                playerHealthScr.Heal(50);
+                inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity--;
+                inventoryScr.hotbarSlotQuantity[inventoryScr.selected_id].text = inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity.ToString();
+            }
+        }*/
     }
 
     protected IEnumerator Use()
     {
         inventoryScr.canSwapItem = false;
         isUsing = true;
-        yield return new WaitForSeconds(1.667f);
+        /*
+        useTime = Time.time;
+        yield return null;*/
+        
+        yield return new WaitForSeconds(0.833f);
+        playerHealthScr.Heal(50);
+        yield return new WaitForSeconds(0.833f);
+        Debug.Log("trigger2");
         inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity--;
         inventoryScr.hotbarSlotQuantity[inventoryScr.selected_id].text = inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity.ToString();
         isUsing = false;
         inventoryScr.canSwapItem = true;
     }
 
-    protected bool CanUse() => Input.GetKey(KeyCode.Mouse1) && !isUsing && !inventoryScr.inventoryActive;
+    protected bool CanUse() => Input.GetKeyDown(KeyCode.Mouse1) && !isUsing && !inventoryScr.inventoryActive;
 }
