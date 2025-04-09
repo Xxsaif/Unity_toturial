@@ -47,8 +47,7 @@ public class PlayerController : MonoBehaviour
          * Den kollar om det finns något objekt på lagret ground (groundMask) som kolliderar med sfären och returnerar en bool. 
          */
         //grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask)
-           || Physics.Raycast(groundCheck.position, Vector3.down, groundDistance + 0.1f);
+        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         timer += Time.deltaTime;
         timer %= 4.033f;

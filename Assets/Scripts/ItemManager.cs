@@ -20,10 +20,9 @@ public static class ItemManager
                 break;
 
             case Item.ItemType.Medkit:
-                gameObject = GetGameObject("Medkit");
+                gameObject = GetGameObject("Medkit_parent");
                 stackLimit = 32;
                 itemName = "Medkit";
-                Debug.Log(gameObject.name);
                 break;
         }
     }

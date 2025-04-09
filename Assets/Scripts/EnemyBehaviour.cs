@@ -45,13 +45,14 @@ public class EnemyBehaviour : MonoBehaviour
     {
         
         playerPosition = player.transform.position;
-        if (agent.destination != playerPosition)
-        {
-            agent.SetDestination(playerPosition);
-        }
-        //transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
+        agent.SetDestination(playerPosition);
+        /*
+        Problem: when enemy can't find path to the target (player) it stops moving.
 
-        //Debug.Log("InRange: " + (Vector3.Distance(transform.position, playerPosition) <= agent.stoppingDistance).ToString() + ", IsAttack: "  + animator.GetCurrentAnimatorStateInfo(0).IsName("zombie_attack").ToString() + ", " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        Proposed solutions: they go idle, they despawn unless a path is found with short time period or system for finding the closest position to the player that the enemy can find a path to.
+
+        */
+        
         if (Vector3.Distance(transform.position, playerPosition) <= agent.stoppingDistance)
         {
             Stop();
