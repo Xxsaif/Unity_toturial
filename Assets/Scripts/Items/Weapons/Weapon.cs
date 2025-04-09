@@ -9,7 +9,6 @@ public abstract class Weapon : MonoBehaviour
     
     
     [HideInInspector] public List<GameObject> enemiesHit;
-    protected Collider bladeCollider;
 
     public WeaponData weaponData;
     protected Inventory inventoryScr;

@@ -13604,6 +13604,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fence_17
       objectReference: {fileID: 0}
+    - target: {fileID: 4586402707194328011, guid: 568b1e8dc64d4864b8c0053bdfb77255, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13616,7 +13620,7 @@ PrefabInstance:
       addedObject: {fileID: 1244809005}
     - targetCorrespondingSourceObject: {fileID: 4768158712560241426, guid: 568b1e8dc64d4864b8c0053bdfb77255, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1635662317}
+      addedObject: {fileID: 1635662322}
   m_SourcePrefab: {fileID: 100100000, guid: 568b1e8dc64d4864b8c0053bdfb77255, type: 3}
 --- !u!1 &932482047
 GameObject:
@@ -17916,14 +17920,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1232533306}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.03816722, y: -0, z: -0, w: 0.99927145}
-  m_LocalPosition: {x: 0, y: -1.921, z: -0.003}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -361.33, y: -13.402, z: 281.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1280423937}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -4.375, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1232533310
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -24172,27 +24176,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4768158712560241426, guid: 568b1e8dc64d4864b8c0053bdfb77255, type: 3}
   m_PrefabInstance: {fileID: 925360056}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &1635662317
-BoxCollider:
+--- !u!208 &1635662322
+NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1635662314}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.438108, y: 1.869485, z: 0.375188}
-  m_Center: {x: -1.5646801, y: 0.9336565, z: -0.045011997}
+  m_Shape: 1
+  m_Extents: {x: 1.7190001, y: 0.93500006, z: 0.18800001}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -1.565, y: 0.934, z: -0.045}
+  m_TimeToStationary: 0.5
 --- !u!4 &1639106482 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6336497869414535676, guid: 8f2efc50a4cf362408c6165b04f3d15c, type: 3}
@@ -28265,8 +28264,8 @@ GameObject:
   - component: {fileID: 1848972426}
   - component: {fileID: 1848972429}
   - component: {fileID: 1848972430}
-  - component: {fileID: 1848972431}
   - component: {fileID: 1848972432}
+  - component: {fileID: 1848972431}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player

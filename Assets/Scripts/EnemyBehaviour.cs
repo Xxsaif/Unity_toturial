@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,11 +24,16 @@ public class EnemyBehaviour : MonoBehaviour
 
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject model;
-
+    private List<Vector3> pastPlayerPos;
+    private List<Vector3> reachablePos;
+    private Vector3 closestPos = new Vector3(0f, 0f, 0f);
+    private float timer = 0f;
     
 
     void Start()
     {
+        pastPlayerPos = new List<Vector3>();
+        reachablePos = new List<Vector3>();
         health = 200f;
         playerPosition = Vector3.zero;
 
@@ -43,16 +50,46 @@ public class EnemyBehaviour : MonoBehaviour
     
     void Update()
     {
-        
-        playerPosition = player.transform.position;
-        agent.SetDestination(playerPosition);
         /*
         Problem: when enemy can't find path to the target (player) it stops moving.
 
         Proposed solutions: they go idle, they despawn unless a path is found with short time period or system for finding the closest position to the player that the enemy can find a path to.
-
         */
+
+        playerPosition = player.transform.position;
+        agent.SetDestination(playerPosition);
+
+        //timer += Time.deltaTime;
+        //if (timer > 5f && agent.pathStatus == NavMeshPathStatus.PathComplete)
+        //{
+        //    pastPlayerPos.Add(playerPosition);
+        //    if (pastPlayerPos.Count > 10)
+        //    {
+        //        pastPlayerPos.RemoveAt(0);
+        //    }
+        //    timer = 0f;
+        //}
+        //if (agent.pathStatus != NavMeshPathStatus.PathComplete)
+        //{
+        //    for (int i = 0; i < pastPlayerPos.Count; i++)
+        //    {
+        //        agent.SetDestination(pastPlayerPos[i]);
+        //        if (agent.pathStatus == NavMeshPathStatus.PathComplete)
+        //        {
+        //            reachablePos.Add(pastPlayerPos[i]);
+        //        }
+        //    }
+
+        //    for (int i = 0; i < reachablePos.Count; i++)
+        //    {
+        //        closestPos = Mathf.Min(Vector3.Distance(playerPosition, closestPos), Vector3.Distance(playerPosition, reachablePos[i])) == Vector3.Distance(playerPosition, reachablePos[i]) ? reachablePos[i] : closestPos;
+        //    }
+
+        //    agent.SetDestination(closestPos);
+        //}
+
         
+
         if (Vector3.Distance(transform.position, playerPosition) <= agent.stoppingDistance)
         {
             Stop();

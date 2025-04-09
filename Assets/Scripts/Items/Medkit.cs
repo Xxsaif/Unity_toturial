@@ -33,8 +33,7 @@ public class Medkit : MonoBehaviour
         yield return new WaitForSeconds(0.833f);
         playerHealthScr.Heal(50);
         yield return new WaitForSeconds(0.833f);
-        inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity--;
-        inventoryScr.hotbarSlotQuantity[inventoryScr.selected_id].text = inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity.ToString();
+        inventoryScr.RemovingFromHotbar(inventoryScr.selected_id, 1);
         isUsing = false;
         inventoryScr.canSwapItem = true;
     }
