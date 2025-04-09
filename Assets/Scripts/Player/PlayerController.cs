@@ -46,7 +46,9 @@ public class PlayerController : MonoBehaviour
         /* Skapar sfär vid positionen av groundcheck som är placerad vid spelarens fot. GroundDistance är radiusen av sfären. 
          * Den kollar om det finns något objekt på lagret ground (groundMask) som kolliderar med sfären och returnerar en bool. 
          */
-        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        //grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask)
+           || Physics.Raycast(groundCheck.position, Vector3.down, groundDistance + 0.1f);
 
         timer += Time.deltaTime;
         timer %= 4.033f;
@@ -87,12 +89,14 @@ public class PlayerController : MonoBehaviour
             }
 
             controller.Move(moveSpeed * Time.deltaTime * move);
-        
+
 
             if (Input.GetKeyDown(KeyCode.Space) && grounded)
             {
                 velocity.y = Mathf.Sqrt(-2f * jumpHeight * gravity);
             }
+
+
 
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
