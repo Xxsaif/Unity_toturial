@@ -7,7 +7,7 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed;
+    private float moveSpeed;
     private float walkSpeed = 5f;
     private float runSpeed = 8f;
     [SerializeField] private LayerMask groundMask;

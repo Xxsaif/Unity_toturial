@@ -11,122 +11,92 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private TextMeshPro healthText; // Temporary health text, should be replaced with health bar
 
     [SerializeField] private NavMeshAgent agent;
-    private float moveSpeed = 3f;
+    private float moveSpeed;
     private float tMove = 0f;
     [SerializeField] private AnimationCurve curveMove;
 
     [SerializeField] private GameObject player;
     private Vector3 playerPosition;
-    private EnemyStates state;
+    private States state;
 
-    private bool attacking;
     private float damage = 30f;
 
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject model;
-    private List<Vector3> pastPlayerPos;
-    private List<Vector3> reachablePos;
-    private Vector3 closestPos = new Vector3(0f, 0f, 0f);
-    private float timer = 0f;
+
+    [SerializeField] private LayerMask playerMask;
+    private float detectionRadius = 25f;
+    private float attackRadius = 2f;
+    [SerializeField] private bool canAttack = false;
+    private bool attacking = false;
+    [SerializeField] private bool playerDetected = false;
     
 
     void Start()
     {
-        pastPlayerPos = new List<Vector3>();
-        reachablePos = new List<Vector3>();
         health = 200f;
         playerPosition = Vector3.zero;
 
         agent = GetComponent<NavMeshAgent>();
-        agent.isStopped = true;
-        agent.speed = moveSpeed;
         agent.SetDestination(Vector3.zero);
 
-        state = EnemyStates.Idle;
-        attacking = false;
-
+        state = States.Searching;
+        
         
     }
     
     void Update()
     {
-        /*
-        Problem: when enemy can't find path to the target (player) it stops moving.
-
-        Proposed solutions: they go idle, they despawn unless a path is found with short time period or system for finding the closest position to the player that the enemy can find a path to.
-        */
-
         playerPosition = player.transform.position;
-        agent.SetDestination(playerPosition);
 
-        //timer += Time.deltaTime;
-        //if (timer > 5f && agent.pathStatus == NavMeshPathStatus.PathComplete)
-        //{
-        //    pastPlayerPos.Add(playerPosition);
-        //    if (pastPlayerPos.Count > 10)
-        //    {
-        //        pastPlayerPos.RemoveAt(0);
-        //    }
-        //    timer = 0f;
-        //}
-        //if (agent.pathStatus != NavMeshPathStatus.PathComplete)
-        //{
-        //    for (int i = 0; i < pastPlayerPos.Count; i++)
-        //    {
-        //        agent.SetDestination(pastPlayerPos[i]);
-        //        if (agent.pathStatus == NavMeshPathStatus.PathComplete)
-        //        {
-        //            reachablePos.Add(pastPlayerPos[i]);
-        //        }
-        //    }
+        playerDetected = Physics.CheckSphere(transform.position, detectionRadius, playerMask);
+        canAttack = Physics.CheckSphere(transform.position, attackRadius, playerMask);
 
-        //    for (int i = 0; i < reachablePos.Count; i++)
-        //    {
-        //        closestPos = Mathf.Min(Vector3.Distance(playerPosition, closestPos), Vector3.Distance(playerPosition, reachablePos[i])) == Vector3.Distance(playerPosition, reachablePos[i]) ? reachablePos[i] : closestPos;
-        //    }
-
-        //    agent.SetDestination(closestPos);
-        //}
-
-        
-
-        if (Vector3.Distance(transform.position, playerPosition) <= agent.stoppingDistance)
+        state = playerDetected ? canAttack ? States.Attacking : States.Chasing : States.Searching;
+        switch (state)
         {
-            Stop();
-            state = EnemyStates.Attacking;
+            case States.Attacking:
+                AttackAni();
+                agent.isStopped = true;
+                agent.speed = 0f;
+
+                if (!Attacking() && !attacking)
+                {
+                    Invoke(nameof(Attack), 1f);
+                    AttackAni();
+                    attacking = true;
+                }
+                if (model.transform.localPosition.y != 0f)
+                {
+                    model.transform.localPosition = new Vector3(model.transform.localPosition.x, 0f, model.transform.localPosition.z);
+                }
+                break;
+
+
+            case States.Chasing:
+                agent.SetDestination(playerPosition);
+                CancelInvoke();
+                if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f || animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 0f)
+                {
+                    attacking = false;
+                    model.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                }
+                break;
+
+            case States.Searching:
+                agent.SetDestination(playerPosition); // should be replaced with searching system
+                break;
         }
-        else
+
+        if (state == States.Searching || state == States.Chasing)
         {
-            CancelInvoke();
-            if (agent.isStopped && (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f || animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 0f))
-            {
-                Move();
-                state = EnemyStates.Walking;
-                WalkAni();
-                attacking = false;
-                model.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
-            }
-        }
-        
-        if (!agent.isStopped && state == EnemyStates.Walking)
-        {
+            WalkAni();
+            agent.isStopped = false;
             tMove += Time.deltaTime / 4.033f;
             moveSpeed = curveMove.Evaluate(tMove) * 2.9f;
             agent.speed = moveSpeed;
         }
-        if (state == EnemyStates.Attacking && agent.isStopped)
-        {
-            if (!Attacking() && !attacking)
-            {
-                Invoke(nameof(Attack), 1f);
-                AttackAni();
-                attacking = true;
-            }
-            if (model.transform.position.y != 0f)
-            {
-                model.transform.localPosition = new Vector3(model.transform.localPosition.x, 0f, model.transform.localPosition.z);
-            }
-        }
+
     }
     public void TakeDmg(float dmg)
     {
@@ -146,11 +116,6 @@ public class EnemyBehaviour : MonoBehaviour
         healthText.text = health.ToString() + "hp";
     }
 
-    private void Move()
-    {
-        agent.isStopped = false;
-        agent.speed = moveSpeed;
-    }
     private void Stop()
     {
         agent.isStopped = true;
@@ -183,21 +148,14 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void AttackAni()
     {
-        //IdleAni();
-        //animator.SetBool("Walking", false);
-        //animator.SetBool("Running", false);
         animator.SetTrigger("zombieAttack");
-
     }
     public bool Attacking() => animator.GetCurrentAnimatorStateInfo(0).IsName("zombie_attack");
-    private enum EnemyStates
+    private enum States
     {
-        Idle,
-        Walking,
-        Running,
         Attacking,
-        Dying,
-        Dead
+        Chasing,
+        Searching
     }
    
 }
