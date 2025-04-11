@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
+using Unity.Mathematics;
+
 
 public class EnemyBehaviour : MonoBehaviour
 {
@@ -17,7 +20,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     [SerializeField] private GameObject player;
     private Vector3 playerPosition;
-    private States state;
+    [SerializeField] private States state;
 
     private float damage = 30f;
 
@@ -25,12 +28,18 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private GameObject model;
 
     [SerializeField] private LayerMask playerMask;
+    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask wallMask;
     private float detectionRadius = 25f;
     private float attackRadius = 2f;
     [SerializeField] private bool canAttack = false;
     private bool attacking = false;
     [SerializeField] private bool playerDetected = false;
-    
+    private System.Random r = new System.Random();
+    private readonly float distance = 40f;
+    private bool wasChasing = true;
+    [SerializeField] private GameObject testingSphere;
+    private int loopNum = 0;
 
     void Start()
     {
@@ -41,8 +50,7 @@ public class EnemyBehaviour : MonoBehaviour
         agent.SetDestination(Vector3.zero);
 
         state = States.Searching;
-        
-        
+
     }
     
     void Update()
@@ -68,7 +76,7 @@ public class EnemyBehaviour : MonoBehaviour
                 }
                 if (model.transform.localPosition.y != 0f)
                 {
-                    model.transform.localPosition = new Vector3(model.transform.localPosition.x, 0f, model.transform.localPosition.z);
+                    model.transform.localPosition = new Vector3(model.transform.localPosition.x, model.transform.localPosition.y, 0f);
                 }
                 break;
 
@@ -81,10 +89,35 @@ public class EnemyBehaviour : MonoBehaviour
                     attacking = false;
                     model.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
                 }
+                wasChasing = true;
                 break;
 
             case States.Searching:
-                agent.SetDestination(playerPosition); // should be replaced with searching system
+                if ((agent.remainingDistance <= agent.stoppingDistance && Vector3.Distance(transform.position, agent.destination) <= agent.stoppingDistance) || wasChasing)
+                {
+                    bool destinationFound = false;
+                    while (!destinationFound)
+                    {
+                        Vector3 destination = new Vector3(r.Next(-100, 100), 0f, r.Next(-100, 100));
+                        destination.Normalize();
+                        destination = destination * distance + playerPosition;
+                        for (float i = 1; i < 6; i++)
+                        {
+                            Ray ray = new(new Vector3(destination.x, destination.y + i, destination.z), Vector3.down);
+                            if (Physics.Raycast(ray, out RaycastHit info, 10f, groundMask) && !Physics.CheckSphere(info.point, 1f, wallMask))
+                            {
+                                agent.SetDestination(info.point);
+                                if (agent.pathStatus == NavMeshPathStatus.PathComplete)
+                                {
+                                    destinationFound = true;
+                                    Instantiate(testingSphere, agent.destination, new Quaternion(0f, 0f, 0f, 0f));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                wasChasing = false;
                 break;
         }
 
@@ -95,6 +128,11 @@ public class EnemyBehaviour : MonoBehaviour
             tMove += Time.deltaTime / 4.033f;
             moveSpeed = curveMove.Evaluate(tMove) * 2.9f;
             agent.speed = moveSpeed;
+            if ((int)tMove != loopNum)
+            {
+                model.transform.localPosition = Vector3.zero;
+                loopNum = (int)tMove;
+            }
         }
 
     }
