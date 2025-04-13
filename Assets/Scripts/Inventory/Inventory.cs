@@ -72,9 +72,9 @@ public class Inventory : MonoBehaviour
             }
         }
         inventoryScreen.SetActive(false);
-        AddItem(Item.ItemType.Axe, 48);
-        AddItem(Item.ItemType.Sword, 48);
-        AddItem(Item.ItemType.Medkit, 48);
+        AddItem(Item.ItemType.Axe, 2);
+        AddItem(Item.ItemType.Sword, 2);
+        AddItem(Item.ItemType.Medkit, 7);
     }
 
     
@@ -144,9 +144,7 @@ public class Inventory : MonoBehaviour
                     {
                         inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
                         item_selected = false;
-                        animator.SetBool("Sword_Equipped", false);
-                        animator.SetBool("Axe_Equipped", false);
-                        animator.SetBool("Medkit_Equipped", false);
+                        animator.SetBool("Item_Equipped", false);
                     }
                     hotbarSlotImg[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
                     canSwapItem = false;
@@ -192,33 +190,13 @@ public class Inventory : MonoBehaviour
     {
         if (inventoryData.hotbarItems[selected_id] != null)
         {
-            switch (inventoryData.hotbarItems[selected_id].itemType)
-            {
-                case Item.ItemType.Sword:
-                    animator.SetBool("Sword_Equipped", true);
-                    animator.SetBool("Axe_Equipped", false);
-                    animator.SetBool("Medkit_Equipped", false);
-                    break;
-
-                case Item.ItemType.Axe:
-                    animator.SetBool("Axe_Equipped", true);
-                    animator.SetBool("Sword_Equipped", false);
-                    animator.SetBool("Medkit_Equipped", false);
-                    break;
-
-                case Item.ItemType.Medkit:
-                    animator.SetBool("Medkit_Equipped", true);
-                    animator.SetBool("Axe_Equipped", false);
-                    animator.SetBool("Sword_Equipped", false);
-                    break;
-            }
+            animator.SetBool("Item_Equipped", true);
+            animator.SetInteger("Item_Type_Id", (int)inventoryData.hotbarItems[selected_id].itemType);
         }
         
         else
         {
-            animator.SetBool("Axe_Equipped", false);
-            animator.SetBool("Sword_Equipped", false);
-            animator.SetBool("Medkit_Equipped", false);
+            animator.SetBool("Item_Equipped", false);
         }
     }
 
@@ -466,9 +444,7 @@ public class Inventory : MonoBehaviour
         else
         {
             item_selected = false;
-            animator.SetBool("Sword_Equipped", false);
-            animator.SetBool("Axe_Equipped", false);
-            animator.SetBool("Medkit_Equipped", false);
+            animator.SetBool("Item_Equipped", false);
         }
 
         yield return new WaitForSeconds(0.025f);

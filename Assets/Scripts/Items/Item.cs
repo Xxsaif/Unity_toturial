@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class Item
 {
@@ -21,7 +20,9 @@ public class Item
     public enum ItemType
     {
         Sword,
+        Axe,
         Medkit,
-        Axe
+        Stone,
+        Stick
     }
 }

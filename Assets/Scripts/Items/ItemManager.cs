@@ -9,20 +9,32 @@ public static class ItemManager
         {
             case Item.ItemType.Sword:
                 gameObject = GetGameObject("Sword");
-                stackLimit = 32;
+                stackLimit = 1;
                 itemName = "Sword";
                 break;
 
             case Item.ItemType.Axe:
                 gameObject = GetGameObject("Axe");
-                stackLimit = 16;
+                stackLimit = 1;
                 itemName = "Axe";
                 break;
 
             case Item.ItemType.Medkit:
                 gameObject = GetGameObject("Medkit_parent");
-                stackLimit = 32;
+                stackLimit = 4;
                 itemName = "Medkit";
+                break;
+
+            case Item.ItemType.Stick:
+                gameObject = GetGameObject("Stick");
+                stackLimit = 16;
+                itemName = "Stick";
+                break;
+
+            case Item.ItemType.Stone:
+                gameObject = GetGameObject("Stone");
+                stackLimit = 16;
+                itemName = "Stone";
                 break;
         }
     }

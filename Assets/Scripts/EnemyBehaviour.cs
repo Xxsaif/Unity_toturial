@@ -41,6 +41,9 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private GameObject testingSphere;
     private int loopNum = 0;
 
+    private Vector3 moveStartPos;
+    private bool moveBack = false;
+    private float t = 0f;
     void Start()
     {
         health = 200f;
@@ -76,7 +79,7 @@ public class EnemyBehaviour : MonoBehaviour
                 }
                 if (model.transform.localPosition.y != 0f)
                 {
-                    model.transform.localPosition = new Vector3(model.transform.localPosition.x, model.transform.localPosition.y, 0f);
+                    model.transform.localPosition = new Vector3(model.transform.localPosition.x, 0f, model.transform.localPosition.z);
                 }
                 break;
 
@@ -98,19 +101,18 @@ public class EnemyBehaviour : MonoBehaviour
                     bool destinationFound = false;
                     while (!destinationFound)
                     {
-                        Vector3 destination = new Vector3(r.Next(-100, 100), 0f, r.Next(-100, 100));
+                        Vector3 destination = new(r.Next(-100, 100), 0f, r.Next(-100, 100));
                         destination.Normalize();
                         destination = destination * distance + playerPosition;
                         for (float i = 1; i < 6; i++)
                         {
-                            Ray ray = new(new Vector3(destination.x, destination.y + i, destination.z), Vector3.down);
-                            if (Physics.Raycast(ray, out RaycastHit info, 10f, groundMask) && !Physics.CheckSphere(info.point, 1f, wallMask))
+                            if (Physics.Raycast(new Vector3(destination.x, destination.y + i, destination.z), Vector3.down, out RaycastHit info, 10f, groundMask) && !Physics.CheckSphere(info.point, 1f, wallMask))
                             {
                                 agent.SetDestination(info.point);
                                 if (agent.pathStatus == NavMeshPathStatus.PathComplete)
                                 {
                                     destinationFound = true;
-                                    Instantiate(testingSphere, agent.destination, new Quaternion(0f, 0f, 0f, 0f));
+                                    Instantiate(testingSphere, agent.destination, Quaternion.Euler(0f, 0f, 0f));
                                     break;
                                 }
                             }
@@ -130,8 +132,20 @@ public class EnemyBehaviour : MonoBehaviour
             agent.speed = moveSpeed;
             if ((int)tMove != loopNum)
             {
-                model.transform.localPosition = Vector3.zero;
+                moveBack = true;
                 loopNum = (int)tMove;
+                moveStartPos = model.transform.localPosition;
+                t = 0f;
+            }
+        }
+
+        if (moveBack)
+        {
+            t += Time.deltaTime * 2f;
+            model.transform.localPosition = new Vector3(model.transform.localPosition.x, model.transform.localPosition.y, Mathf.Lerp(moveStartPos.z, 0f, t));
+            if (t >= 1f)
+            {
+                moveBack = false;
             }
         }
 
@@ -149,7 +163,7 @@ public class EnemyBehaviour : MonoBehaviour
     private void Die()
     {
         //gameObject.SetActive(false);
-        // temporarily turned of dying for the sake of testing
+        // temporarily turned off dying for the sake of testing
         health = 200f;
         healthText.text = health.ToString() + "hp";
     }
