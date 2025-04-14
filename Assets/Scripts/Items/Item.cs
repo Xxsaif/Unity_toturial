@@ -22,7 +22,7 @@ public class Item
         Sword,
         Axe,
         Medkit,
-        Stone,
+        Rock,
         Stick
     }
 }

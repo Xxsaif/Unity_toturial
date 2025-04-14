@@ -75,6 +75,7 @@ public class Inventory : MonoBehaviour
         AddItem(Item.ItemType.Axe, 2);
         AddItem(Item.ItemType.Sword, 2);
         AddItem(Item.ItemType.Medkit, 7);
+        AddItem(Item.ItemType.Rock, 24);
     }
 
     
@@ -412,7 +413,10 @@ public class Inventory : MonoBehaviour
     }
     private void RemoveHotbarItem(int fromPos)
     {
-        inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
+        if (fromPos == selected_id)
+        {
+            inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
+        }
         inventoryData.hotbarItems[fromPos] = null;
         hotbarSlotIcons[fromPos].text = string.Empty;
         hotbarSlotQuantity[fromPos].text = string.Empty;

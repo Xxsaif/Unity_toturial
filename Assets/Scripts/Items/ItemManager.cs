@@ -25,17 +25,18 @@ public static class ItemManager
                 itemName = "Medkit";
                 break;
 
+            case Item.ItemType.Rock:
+                gameObject = GetGameObject("Rock");
+                stackLimit = 16;
+                itemName = "Rock";
+                break;
+
             case Item.ItemType.Stick:
                 gameObject = GetGameObject("Stick");
                 stackLimit = 16;
                 itemName = "Stick";
                 break;
 
-            case Item.ItemType.Stone:
-                gameObject = GetGameObject("Stone");
-                stackLimit = 16;
-                itemName = "Stone";
-                break;
         }
     }
 
