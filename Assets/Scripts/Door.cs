@@ -2,8 +2,9 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.Properties;
+using TMPro;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, InteractableObject
 {
     private readonly float[] openRotations = { 90f, -90f };
     [SerializeField] private GameObject model;
@@ -12,6 +13,13 @@ public class Door : MonoBehaviour
     private int openingId;
     [SerializeField] private LayerMask playerMask;
     private readonly float speed = 1.5f;
+    [SerializeField] private TextMeshProUGUI interactionText;
+    private GameObject player;
+
+    private void Start()
+    {
+        player = GameObject.Find("Player");
+    }
 
     void Update()
     {
@@ -43,17 +51,32 @@ public class Door : MonoBehaviour
         }
     }
 
+    public void InteractRangeEnter()
+    {
+        interactionText.text = "Press F to\n" + (state == Door.State.Closed ? "open" : "close") + " gate";
+    }
+
+    public void InteractRangeStay()
+    {
+        interactionText.text = "Press F to\n" + (state == Door.State.Closed ? "open" : "close") + " gate";
+    }
+
+    public void InteractRangeExit()
+    {
+        interactionText.text = string.Empty;
+    }
     
-    public void ChangeState(Vector3 playerPos)
+    public void Interact()
     {
         if (state == State.Closed || state == State.Open)
         {
             state = state == State.Closed ? State.Opening : state == State.Open ? State.Closing : state;
             if (state == State.Opening)
             {
-                SetOpeningId(playerPos);
+                SetOpeningId(player.transform.position);
             }
         }
+        InteractRangeEnter();
     }
 
     public void SetOpeningId(Vector3 playerPos)

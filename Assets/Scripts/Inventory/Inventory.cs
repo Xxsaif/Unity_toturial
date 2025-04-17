@@ -201,7 +201,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void AddItem(Item.ItemType itemType, int q)
+    public int AddItem(Item.ItemType itemType, int q)
     {
         int quantity = q;
         for (int i = 0; i < inventoryData.hotbarItems.Length; i++)
@@ -214,7 +214,7 @@ public class Inventory : MonoBehaviour
                 hotbarSlotQuantity[i].text = inventoryData.hotbarItems[i].quantity.ToString();
                 if (quantity == 0)
                 {
-                    return;
+                    return 0;
                 }
             }
             else if (inventoryData.hotbarItems[i] == null)
@@ -231,7 +231,7 @@ public class Inventory : MonoBehaviour
                 }
                 if (quantity == 0)
                 {
-                    return;
+                    return 0;
                 }
             }
         }
@@ -248,7 +248,7 @@ public class Inventory : MonoBehaviour
                     inventorySlotQuantity[y, x].text = inventoryData.inventoryItems[y, x].quantity.ToString();
                     if (quantity == 0)
                     {
-                        return;
+                        return 0;
                     }
                 }
                 if (inventoryData.inventoryItems[y, x] == null)
@@ -259,42 +259,26 @@ public class Inventory : MonoBehaviour
                     inventorySlotQuantity[y, x].text = inventoryData.inventoryItems[y, x].quantity.ToString();
                     if (quantity == 0)
                     {
-                        return;
+                        return 0;
                     }
                 }
             }
         }
 
-
+        return quantity;
     }
 
     public void MoveItem((int x, int y) fromPos, (int x, int y) toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.inventoryItems[toPos.y, toPos.x] == null)
-        {
-            AddingToInventory(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType == inventoryData.inventoryItems[toPos.y, toPos.x].itemType)
-        {
-            quantity = AddingToInventory(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
-        }
+        quantity = AddingToInventory(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
         RemovingFromInventory(fromPos, quantity);
     }
 
     public void MoveItem(int fromPos, int toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.hotbarItems[toPos] == null)
-        {
-            AddingToHotbar(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.hotbarItems[fromPos].itemType == inventoryData.hotbarItems[toPos].itemType)
-        {
-            quantity = AddingToHotbar(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
+        quantity = AddingToHotbar(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
         RemovingFromHotbar(fromPos, quantity);
         
         if (hotbarActive && toPos == selected_id && inventoryData.hotbarItems[selected_id] != null)
@@ -308,15 +292,7 @@ public class Inventory : MonoBehaviour
     public void MoveItem((int x, int y) fromPos, int toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.hotbarItems[toPos] == null)
-        {
-            AddingToHotbar(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType == inventoryData.hotbarItems[toPos].itemType)
-        {
-            quantity = AddingToHotbar(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity); ;
-        }
+        quantity = AddingToHotbar(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity); ;
         RemovingFromInventory(fromPos, quantity);
 
         if (hotbarActive && toPos == selected_id && inventoryData.hotbarItems[selected_id] != null)
@@ -331,16 +307,15 @@ public class Inventory : MonoBehaviour
     public void MoveItem(int fromPos, (int x, int y) toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.inventoryItems[toPos.y, toPos.x] == null)
-        {
-            AddingToInventory(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.hotbarItems[fromPos].itemType == inventoryData.inventoryItems[toPos.y, toPos.x].itemType)
-        {
-            quantity = AddingToInventory(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
+        quantity = AddingToInventory(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
         RemovingFromHotbar(fromPos, quantity);
+
+        if (hotbarActive && fromPos == selected_id && inventoryData.hotbarItems[selected_id] != null)
+        {
+            inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
+            item_selected = false;
+            UpdateAnimator();
+        }
     }
     private int AddingToInventory(Item.ItemType fromType, (int x, int y) toPos, int q)
     {
@@ -355,7 +330,6 @@ public class Inventory : MonoBehaviour
         {
             if (inventoryData.inventoryItems[toPos.y, toPos.x].quantity + quantity >= inventoryData.inventoryItems[toPos.y, toPos.x].stackLimit)
             {
-                inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
                 quantity = inventoryData.inventoryItems[toPos.y, toPos.x].stackLimit - inventoryData.inventoryItems[toPos.y, toPos.x].quantity;
             }
             inventoryData.inventoryItems[toPos.y, toPos.x].quantity += quantity;

@@ -8,24 +8,26 @@ public class PlayerInteractions : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<Door>(out _))
+        if (other.TryGetComponent<InteractableObject>(out _))
         {
             interactionObject = other.gameObject;
+            interactionObject.GetComponent<InteractableObject>().InteractRangeEnter();
         }
+
+        
     }
 
     private void Update()
     {
         if (interactionObject != null)
         {
-            if (interactionObject.TryGetComponent<Door>(out _))
+            if (interactionObject.TryGetComponent<InteractableObject>(out _))
             {
+                interactionObject.GetComponent<InteractableObject>().InteractRangeStay();
                 if (Input.GetKeyDown(KeyCode.F))
                 {
-                    interactionObject.GetComponent<Door>().ChangeState(transform.position);
+                    interactionObject.GetComponent<InteractableObject>().Interact();
                 }
-                Door doorScr = interactionObject.GetComponent<Door>();
-                interactionText.text = "Press F to\n" + (doorScr.state == Door.State.Closed ? "open" : "close") + " gate";
             }
         }
     }
@@ -33,9 +35,9 @@ public class PlayerInteractions : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<Door>(out _))
+        if (other.TryGetComponent<InteractableObject>(out _))
         {
-            interactionText.text = string.Empty;
+            interactionObject.GetComponent<InteractableObject>().InteractRangeExit();
             interactionObject = null;
         }
     }
