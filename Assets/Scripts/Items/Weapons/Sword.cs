@@ -13,8 +13,6 @@ public class Sword : Weapon
     void Start()
     {
         attacking = false;
-        bladeCollider = blade.GetComponent<Collider>();
-        bladeCollider.enabled = false;
         inventoryScr = GameObject.FindWithTag("Player").GetComponent<Inventory>();
     }
 
@@ -33,9 +31,7 @@ public class Sword : Weapon
     {
         inventoryScr.canSwapItem = false;
         attacking = true;
-        bladeCollider.enabled = true;
-        yield return new WaitForSeconds(2f);
-        bladeCollider.enabled = false;
+        yield return new WaitForSeconds(1.5f/animator.GetCurrentAnimatorStateInfo(0).speed);
         enemiesHit.Clear();
         attacking = false;
         inventoryScr.canSwapItem = true;

@@ -14,49 +14,26 @@ public class Medkit : MonoBehaviour
         GameObject player = GameObject.FindWithTag("Player");
         inventoryScr = player.GetComponent<Inventory>();
         playerHealthScr = player.GetComponent<PlayerHealth>();
-        Debug.Log((player != null) + ", " + inventoryScr.gameObject.name + ", " + playerHealthScr.gameObject.name);
     }
 
 
     void Update()
     {
-        if ( Input.GetKey(KeyCode.Mouse1) )
-        {
-            Debug.Log(!isUsing);
-        }
         if (CanUse())
         {
             StartCoroutine(Use());
             animator.SetTrigger("Use");
         }
-        /*
-        if( isUsing )
-        {
-            if(useTime + 1.667F < Time.time )
-            {
-                isUsing = false;
-                inventoryScr.canSwapItem = true;
-                playerHealthScr.Heal(50);
-                inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity--;
-                inventoryScr.hotbarSlotQuantity[inventoryScr.selected_id].text = inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity.ToString();
-            }
-        }*/
     }
 
     protected IEnumerator Use()
     {
         inventoryScr.canSwapItem = false;
         isUsing = true;
-        /*
-        useTime = Time.time;
-        yield return null;*/
-        
         yield return new WaitForSeconds(0.833f);
         playerHealthScr.Heal(50);
         yield return new WaitForSeconds(0.833f);
-        Debug.Log("trigger2");
-        inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity--;
-        inventoryScr.hotbarSlotQuantity[inventoryScr.selected_id].text = inventoryScr.inventoryData.hotbarItems[inventoryScr.selected_id].quantity.ToString();
+        inventoryScr.RemovingFromHotbar(inventoryScr.selected_id, 1);
         isUsing = false;
         inventoryScr.canSwapItem = true;
     }

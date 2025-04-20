@@ -72,9 +72,10 @@ public class Inventory : MonoBehaviour
             }
         }
         inventoryScreen.SetActive(false);
-        AddItem(Item.ItemType.Axe, 48);
-        AddItem(Item.ItemType.Sword, 48);
-        
+        AddItem(Item.ItemType.Axe, 2);
+        AddItem(Item.ItemType.Sword, 2);
+        AddItem(Item.ItemType.Medkit, 7);
+        AddItem(Item.ItemType.Rock, 24);
     }
 
     
@@ -142,15 +143,9 @@ public class Inventory : MonoBehaviour
                 {
                     if (item_selected)
                     {
-                        if(inventoryData.hotbarItems[selected_id].itemType != Item.ItemType.Medkit)
-                        {
-                            inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
-                        }
-                        
+                        inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
                         item_selected = false;
-                        animator.SetBool("Sword_Equipped", false);
-                        animator.SetBool("Axe_Equipped", false);
-                        animator.SetBool("Medkit_Equipped", false);
+                        animator.SetBool("Item_Equipped", false);
                     }
                     hotbarSlotImg[selected_id].GetComponent<Slot>().image.color = hotbarSlotInactive;
                     canSwapItem = false;
@@ -196,37 +191,17 @@ public class Inventory : MonoBehaviour
     {
         if (inventoryData.hotbarItems[selected_id] != null)
         {
-            switch (inventoryData.hotbarItems[selected_id].itemType)
-            {
-                case Item.ItemType.Sword:
-                    animator.SetBool("Sword_Equipped", true);
-                    animator.SetBool("Axe_Equipped", false);
-                    animator.SetBool("Medkit_Equipped", false);
-                    break;
-
-                case Item.ItemType.Axe:
-                    animator.SetBool("Axe_Equipped", true);
-                    animator.SetBool("Sword_Equipped", false);
-                    animator.SetBool("Medkit_Equipped", false);
-                    break;
-
-                case Item.ItemType.Medkit:
-                    animator.SetBool("Medkit_Equipped", true);
-                    animator.SetBool("Axe_Equipped", false);
-                    animator.SetBool("Sword_Equipped", false);
-                    break;
-            }
+            animator.SetBool("Item_Equipped", true);
+            animator.SetInteger("Item_Type_Id", (int)inventoryData.hotbarItems[selected_id].itemType);
         }
         
         else
         {
-            animator.SetBool("Axe_Equipped", false);
-            animator.SetBool("Sword_Equipped", false);
-            animator.SetBool("Medkit_Equipped", false);
+            animator.SetBool("Item_Equipped", false);
         }
     }
 
-    public void AddItem(Item.ItemType itemType, int q)
+    public int AddItem(Item.ItemType itemType, int q)
     {
         int quantity = q;
         for (int i = 0; i < inventoryData.hotbarItems.Length; i++)
@@ -239,7 +214,7 @@ public class Inventory : MonoBehaviour
                 hotbarSlotQuantity[i].text = inventoryData.hotbarItems[i].quantity.ToString();
                 if (quantity == 0)
                 {
-                    return;
+                    return 0;
                 }
             }
             else if (inventoryData.hotbarItems[i] == null)
@@ -256,7 +231,7 @@ public class Inventory : MonoBehaviour
                 }
                 if (quantity == 0)
                 {
-                    return;
+                    return 0;
                 }
             }
         }
@@ -273,7 +248,7 @@ public class Inventory : MonoBehaviour
                     inventorySlotQuantity[y, x].text = inventoryData.inventoryItems[y, x].quantity.ToString();
                     if (quantity == 0)
                     {
-                        return;
+                        return 0;
                     }
                 }
                 if (inventoryData.inventoryItems[y, x] == null)
@@ -284,42 +259,26 @@ public class Inventory : MonoBehaviour
                     inventorySlotQuantity[y, x].text = inventoryData.inventoryItems[y, x].quantity.ToString();
                     if (quantity == 0)
                     {
-                        return;
+                        return 0;
                     }
                 }
             }
         }
 
-
+        return quantity;
     }
 
     public void MoveItem((int x, int y) fromPos, (int x, int y) toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.inventoryItems[toPos.y, toPos.x] == null)
-        {
-            AddingToInventory(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType == inventoryData.inventoryItems[toPos.y, toPos.x].itemType)
-        {
-            quantity = AddingToInventory(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
-        }
+        quantity = AddingToInventory(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
         RemovingFromInventory(fromPos, quantity);
     }
 
     public void MoveItem(int fromPos, int toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.hotbarItems[toPos] == null)
-        {
-            AddingToHotbar(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.hotbarItems[fromPos].itemType == inventoryData.hotbarItems[toPos].itemType)
-        {
-            quantity = AddingToHotbar(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
+        quantity = AddingToHotbar(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
         RemovingFromHotbar(fromPos, quantity);
         
         if (hotbarActive && toPos == selected_id && inventoryData.hotbarItems[selected_id] != null)
@@ -333,15 +292,7 @@ public class Inventory : MonoBehaviour
     public void MoveItem((int x, int y) fromPos, int toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.hotbarItems[toPos] == null)
-        {
-            AddingToHotbar(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType == inventoryData.hotbarItems[toPos].itemType)
-        {
-            quantity = AddingToHotbar(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity); ;
-        }
+        quantity = AddingToHotbar(inventoryData.inventoryItems[fromPos.y, fromPos.x].itemType, toPos, quantity); ;
         RemovingFromInventory(fromPos, quantity);
 
         if (hotbarActive && toPos == selected_id && inventoryData.hotbarItems[selected_id] != null)
@@ -356,16 +307,15 @@ public class Inventory : MonoBehaviour
     public void MoveItem(int fromPos, (int x, int y) toPos, int q)
     {
         int quantity = q;
-        if (inventoryData.inventoryItems[toPos.y, toPos.x] == null)
-        {
-            AddingToInventory(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
-
-        else if (inventoryData.hotbarItems[fromPos].itemType == inventoryData.inventoryItems[toPos.y, toPos.x].itemType)
-        {
-            quantity = AddingToInventory(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
-        }
+        quantity = AddingToInventory(inventoryData.hotbarItems[fromPos].itemType, toPos, quantity);
         RemovingFromHotbar(fromPos, quantity);
+
+        if (hotbarActive && fromPos == selected_id && inventoryData.hotbarItems[selected_id] != null)
+        {
+            inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
+            item_selected = false;
+            UpdateAnimator();
+        }
     }
     private int AddingToInventory(Item.ItemType fromType, (int x, int y) toPos, int q)
     {
@@ -380,10 +330,6 @@ public class Inventory : MonoBehaviour
         {
             if (inventoryData.inventoryItems[toPos.y, toPos.x].quantity + quantity >= inventoryData.inventoryItems[toPos.y, toPos.x].stackLimit)
             {
-                if (inventoryData.hotbarItems[selected_id].itemType != Item.ItemType.Medkit)
-                {
-                    inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
-                }
                 quantity = inventoryData.inventoryItems[toPos.y, toPos.x].stackLimit - inventoryData.inventoryItems[toPos.y, toPos.x].quantity;
             }
             inventoryData.inventoryItems[toPos.y, toPos.x].quantity += quantity;
@@ -441,7 +387,7 @@ public class Inventory : MonoBehaviour
     }
     private void RemoveHotbarItem(int fromPos)
     {
-        if (fromPos == selected_id && inventoryData.hotbarItems[selected_id].itemType != Item.ItemType.Medkit)
+        if (fromPos == selected_id)
         {
             inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
         }
@@ -458,14 +404,7 @@ public class Inventory : MonoBehaviour
     {
         if (item_selected)
         {
-            if (inventoryData.hotbarItems[selected_id].itemType != Item.ItemType.Medkit)
-            {
-                inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
-            }
-            //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
-            //{
-            //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
-            //}
+            inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
         }
         hotbarSlotImg[selected_id].color = hotbarSlotInactive;
 
@@ -477,35 +416,16 @@ public class Inventory : MonoBehaviour
         if (inventoryData.hotbarItems[selected_id] != null)
         {
             inventoryData.hotbarItems[selected_id].gameObject.SetActive(true);
-            if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
-            {
-                Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
-                //inventoryData.hotbarItems[selected_id].gameObject.isStatic = true;
-                //inventoryData.hotbarItems[selected_id].gameObject.SetActive(false);
-            }
             item_selected = true;
             UpdateAnimator();
-            //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
-            //{
-            //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
-            //}
         }
         else
         {
             item_selected = false;
-            animator.SetBool("Sword_Equipped", false);
-            animator.SetBool("Axe_Equipped", false);
-            animator.SetBool("Medkit_Equipped", false);
+            animator.SetBool("Item_Equipped", false);
         }
-        //if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
-        //{
-        //    Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
-        //}
+
         yield return new WaitForSeconds(0.025f);
         canScroll = true;
-        if (inventoryData.hotbarItems[selected_id].itemType == Item.ItemType.Medkit)
-        {
-            Debug.Log(inventoryData.hotbarItems[selected_id].gameObject.activeSelf + " , " + selected_id + " , " + inventoryData.hotbarItems[selected_id].gameObject.name);
-        }
     }
 }
