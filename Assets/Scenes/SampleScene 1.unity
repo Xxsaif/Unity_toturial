@@ -32572,7 +32572,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: 00:00
 --- !u!222 &1642342242
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -43808,6 +43808,7 @@ MonoBehaviour:
   DirectionalLight: {fileID: 1254242126}
   Preset: {fileID: 11400000, guid: f04fba55c4c49c344a1acd732f03e881, type: 2}
   TimeOfDay: 0
+  timeText: {fileID: 1642342241}
 --- !u!4 &2114975425
 Transform:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI; 
 // Created and written by Oliver
-// Edited by
+// Edited by Louis
 [ExecuteAlways]
 public class LightingManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class LightingManager : MonoBehaviour
     [SerializeField]private LightingPreset Preset;
     //Variables
     [SerializeField, Range(0, 24)]private float TimeOfDay;
+    [SerializeField] private Text timeText;
+
 
     private void Update()
     {
@@ -25,6 +28,8 @@ public class LightingManager : MonoBehaviour
         {
             UpdateLighting(TimeOfDay / 24f);
         }
+
+        UpdateTimeUI();
     }
 
     private void UpdateLighting(float timePercent)
@@ -37,6 +42,16 @@ public class LightingManager : MonoBehaviour
             DirectionalLight.color = Preset.DirectionalColor.Evaluate(timePercent);
             DirectionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, -170, 0));
         }
+    }
+
+    private void UpdateTimeUI()
+    {
+        if (timeText == null) return;
+
+        int hours = Mathf.FloorToInt(TimeOfDay);
+        int minutes = Mathf.FloorToInt((TimeOfDay - hours) * 60f);
+
+        timeText.text = string.Format("{0:00}:{1:00}", hours, minutes);
     }
 
 //    private void OnValidate()
