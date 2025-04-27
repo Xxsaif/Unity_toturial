@@ -6,12 +6,12 @@ public class MouseLook : MonoBehaviour
     private float xRotation = 0f;
 
     [SerializeField] private GameObject player;
-    private Inventory inventoryScr;
+    private InventorySave inventoryScr;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        inventoryScr = player.GetComponent<Inventory>();
+        inventoryScr = player.GetComponent<InventorySave>();
     }
 
     

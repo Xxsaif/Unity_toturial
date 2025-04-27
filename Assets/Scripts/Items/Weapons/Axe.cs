@@ -13,7 +13,7 @@ public class Axe : Weapon
     void Start()
     {
         attacking = false;
-        inventoryScr = GameObject.FindWithTag("Player").GetComponent<Inventory>();
+        inventoryScr = GameObject.FindWithTag("Player").GetComponent<InventorySave>();
     }
 
 

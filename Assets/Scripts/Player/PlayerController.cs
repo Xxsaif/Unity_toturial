@@ -31,13 +31,13 @@ public class PlayerController : MonoBehaviour
     private float timer;
     [SerializeField] private TextMeshProUGUI timerText;
 
-    private Inventory inventoryScr;
+    private InventorySave inventoryScr;
     void Start()
     {
         controller = GetComponent<CharacterController>();
         grounded = true;
         moveSpeed = walkSpeed;
-        inventoryScr = GetComponent<Inventory>();
+        inventoryScr = GetComponent<InventorySave>();
     }
 
     

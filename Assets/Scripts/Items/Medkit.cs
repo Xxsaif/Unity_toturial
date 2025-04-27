@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Medkit : MonoBehaviour
 {
-    private Inventory inventoryScr;
+    private InventorySave inventoryScr;
     private PlayerHealth playerHealthScr;
     [SerializeField] private Animator animator;
     private bool isUsing = false;
@@ -12,7 +12,7 @@ public class Medkit : MonoBehaviour
     void Start()
     {
         GameObject player = GameObject.FindWithTag("Player");
-        inventoryScr = player.GetComponent<Inventory>();
+        inventoryScr = player.GetComponent<InventorySave>();
         playerHealthScr = player.GetComponent<PlayerHealth>();
     }
 

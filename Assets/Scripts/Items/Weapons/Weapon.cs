@@ -11,7 +11,7 @@ public abstract class Weapon : MonoBehaviour
     [HideInInspector] public List<GameObject> enemiesHit;
 
     public WeaponData weaponData;
-    protected Inventory inventoryScr;
+    protected InventorySave inventoryScr;
     protected bool attacking;
     void Start()
     {

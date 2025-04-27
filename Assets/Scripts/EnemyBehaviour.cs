@@ -38,7 +38,6 @@ public class EnemyBehaviour : MonoBehaviour
     private System.Random r = new System.Random();
     private readonly float distance = 40f;
     private bool wasChasing = true;
-    [SerializeField] private GameObject testingSphere;
     private int loopNum = 0;
 
     private Vector3 moveStartPos;
@@ -112,7 +111,6 @@ public class EnemyBehaviour : MonoBehaviour
                                 if (agent.pathStatus == NavMeshPathStatus.PathComplete)
                                 {
                                     destinationFound = true;
-                                    Instantiate(testingSphere, agent.destination, Quaternion.Euler(0f, 0f, 0f));
                                     break;
                                 }
                             }
