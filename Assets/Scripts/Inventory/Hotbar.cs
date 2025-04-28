@@ -16,6 +16,12 @@ public class Hotbar : Inventory
     private readonly KeyCode[] numberKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0 };
     void Start()
     {
+        inventoryItems = new Item[inventorySlots.Length];
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            inventorySlots[i].inventory = this;
+            inventorySlots[i].slotInventoryPos = i;
+        }
         item_selected = false;
         canSwapItem = false;
         hotbarActive = false;

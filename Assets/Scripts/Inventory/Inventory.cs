@@ -14,15 +14,33 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         inventoryItems = new Item[inventorySlots.Length];
+        for (int i = 0;  i < inventorySlots.Length; i++)
+        {
+            inventorySlots[i].inventory = this;
+            inventorySlots[i].slotInventoryPos = i;
+        }
+        AddItem(Item.ItemType.Axe, 2);
+        AddItem(Item.ItemType.Sword, 2);
+        AddItem(Item.ItemType.Medkit, 7);
+        AddItem(Item.ItemType.Rock, 24);
     }
 
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && gameObject.name == "Player")
+        {
+            ChangeActiveState();
+        }
+    }
+
+    public void ChangeActiveState()
+    {
+        if (inventoryActive == PlayerController.inventoryActive)
         {
             inventoryScreen.SetActive(!inventoryScreen.activeSelf);
             inventoryActive = inventoryScreen.activeSelf;
+            PlayerController.inventoryActive = inventoryActive;
             if (inventoryScreen.activeSelf)
             {
                 Cursor.lockState = CursorLockMode.None;
@@ -35,14 +53,13 @@ public class Inventory : MonoBehaviour
                 Cursor.visible = false;
             }
         }
-
     }
 
     public virtual int AddItem(Item.ItemType itemType, int q)
     {
         int quantity = q;
         
-        for (int y = 0; y < inventoryItems.GetLength(0); y++)
+        for (int y = 0; y < inventoryItems.Length; y++)
         {
 
             if (inventoryItems[y] != null && inventoryItems[y].itemType == itemType)
@@ -59,6 +76,7 @@ public class Inventory : MonoBehaviour
             if (inventoryItems[y] == null)
             {
                 inventoryItems[y] = new Item(itemType, quantity);
+                //Debug.Log(inventorySlots[y].slotIcon == null);
                 inventorySlots[y].slotIcon.text = inventoryItems[y].Name;
                 quantity -= Mathf.Clamp(quantity, 1, inventoryItems[y].stackLimit);
                 inventorySlots[y].slotQuantity.text = inventoryItems[y].quantity.ToString();

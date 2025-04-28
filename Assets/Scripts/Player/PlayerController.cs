@@ -31,13 +31,13 @@ public class PlayerController : MonoBehaviour
     private float timer;
     [SerializeField] private TextMeshProUGUI timerText;
 
-    private InventorySave inventoryScr;
+    public static bool inventoryActive;
     void Start()
     {
+        inventoryActive = false;
         controller = GetComponent<CharacterController>();
         grounded = true;
         moveSpeed = walkSpeed;
-        inventoryScr = GetComponent<InventorySave>();
     }
 
     
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = -3f;
         }
 
-        if (!inventoryScr.inventoryActive)
+        if (!inventoryActive)
         {
             float hInput = Input.GetAxisRaw("Horizontal");
             float vInput = Input.GetAxisRaw("Vertical");
@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
         }
-        else if (inventoryScr.inventoryActive)
+        else if (inventoryActive)
         {
             moveSpeed = walkSpeed;
         }

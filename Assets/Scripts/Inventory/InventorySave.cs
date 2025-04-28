@@ -44,7 +44,7 @@ public class InventorySave : MonoBehaviour
         for (int i = 0; i < hotbarSlotIcons.Length; i++)
         {
             GameObject slot = hotbar.transform.GetChild(i).gameObject;
-            slot.GetComponent<Slot>().slotHotbarPos = i;
+            //slot.GetComponent<Slot>().slotHotbarPos = i;
 
             hotbarSlotImg[i] = slot.GetComponent<Image>();
             hotbarSlotIcons[i] = slot.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
@@ -58,7 +58,7 @@ public class InventorySave : MonoBehaviour
                 if (inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject != null)
                 {
                     GameObject slot = inventoryScreen.transform.GetChild(y).transform.GetChild(x).gameObject;
-                    slot.GetComponent<Slot>().slotInventoryPos = (x, y);
+                    //slot.GetComponent<Slot>().slotInventoryPos = (x, y);
                     if (slot.transform.GetChild(0).gameObject != null)
                     {
                         inventorySlotIcons[y, x] = slot.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();

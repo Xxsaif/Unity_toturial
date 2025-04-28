@@ -6,18 +6,17 @@ public class MouseLook : MonoBehaviour
     private float xRotation = 0f;
 
     [SerializeField] private GameObject player;
-    private InventorySave inventoryScr;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        inventoryScr = player.GetComponent<InventorySave>();
+        
     }
 
     
     void Update()
     {
-        if (!inventoryScr.inventoryActive)
+        if (!PlayerController.inventoryActive)
         {
             float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;

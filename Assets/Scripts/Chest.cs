@@ -7,7 +7,7 @@ public class Chest : MonoBehaviour, InteractableObject
     [HideInInspector] public TextMeshProUGUI[,] chestSlotIcons = new TextMeshProUGUI[3, 6];
     [HideInInspector] public TextMeshProUGUI[,] chestSlotQuantity = new TextMeshProUGUI[3, 6];
     [SerializeField] private TextMeshProUGUI interactionText;
-    [SerializeField] private GameObject inventoryScreen;
+    [SerializeField] private Inventory inventory;
     void Start()
     {
         
@@ -35,6 +35,6 @@ public class Chest : MonoBehaviour, InteractableObject
 
     public void Interact()
     {
-        inventoryScreen.SetActive(!inventoryScreen.activeSelf);
+        inventory.ChangeActiveState();
     }
 }

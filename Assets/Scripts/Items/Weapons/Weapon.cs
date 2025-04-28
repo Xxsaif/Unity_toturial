@@ -11,7 +11,8 @@ public abstract class Weapon : MonoBehaviour
     [HideInInspector] public List<GameObject> enemiesHit;
 
     public WeaponData weaponData;
-    protected InventorySave inventoryScr;
+    protected Hotbar hotbar;
+    protected Inventory inventory;
     protected bool attacking;
     void Start()
     {
@@ -28,5 +29,5 @@ public abstract class Weapon : MonoBehaviour
         yield return null;
     }
 
-    protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !inventoryScr.inventoryActive;
+    protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !inventory.inventoryActive;
 }
