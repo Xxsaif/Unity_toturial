@@ -30,7 +30,7 @@ public class Blade : MonoBehaviour
             EnemyBehaviour enemy = other.GetComponent<EnemyBehaviour>();
             if (enemy != null)
             {
-                enemy.TakeDmg(weaponScr.weaponData.damage);
+                enemy.TakeDmg(weaponScr.Damage());
                 StartCoroutine(Knockback(other.gameObject));
             }
             weaponScr.enemiesHit.Add(other.gameObject); // adds enemy to list of enemies hit to make sure that the same enemy can't be hit twice from the same attack

@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class DroppedItem : MonoBehaviour, InteractableObject
 {
-    private InventorySave inventory;
+    private Inventory inventory;
     public Item item;
     public Item.ItemType type;
     public int quantity;
     [SerializeField] private TextMeshProUGUI interactionText;
     void Start()
     {
-        inventory = GameObject.Find("Player").GetComponent<InventorySave>();
+        inventory = GameObject.Find("Player").GetComponent<Inventory>();
         item = new Item(type, quantity);
     }
 

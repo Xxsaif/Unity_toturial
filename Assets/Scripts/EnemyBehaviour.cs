@@ -151,7 +151,7 @@ public class EnemyBehaviour : MonoBehaviour
     public void TakeDmg(float dmg)
     {
         health -= dmg;
-        healthText.text = health.ToString() + "hp";
+        healthText.text = Math.Round(health).ToString() + "hp";
         if (health <= 0f)
         {
             Die();
@@ -164,6 +164,7 @@ public class EnemyBehaviour : MonoBehaviour
         // temporarily turned off dying for the sake of testing
         health = 200f;
         healthText.text = health.ToString() + "hp";
+        LevelSystem.IncreaseExperience(50f);
     }
 
     private void Stop()

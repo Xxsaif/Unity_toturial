@@ -30,4 +30,6 @@ public abstract class Weapon : MonoBehaviour
     }
 
     protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !inventory.inventoryActive;
+
+    public float Damage() => weaponData.damage * LevelSystem.PlayerDamageMultiplier;
 }

@@ -32,7 +32,7 @@ public class Axe : Weapon
     {
         hotbar.canSwapItem = false;
         attacking = true;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f / animator.GetCurrentAnimatorStateInfo(0).speed);
         enemiesHit.Clear();
         attacking = false;
         hotbar.canSwapItem = true;
