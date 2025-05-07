@@ -8,9 +8,7 @@ public class MiniMapScript : MonoBehaviour
 
     void LateUpdate()
     {
-        Vector3 pos = player.position;
-        pos.y = height;
-        transform.position = pos;
+        transform.position = new Vector3(player.position.x, player.position.y + height, player.position.z);
         transform.rotation = Quaternion.Euler(rotationAngle, player.eulerAngles.y, 0);
     }
 }
