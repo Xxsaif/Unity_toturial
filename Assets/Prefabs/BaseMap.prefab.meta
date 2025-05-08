@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/BaseMap.prefab.meta
 guid: c71f36f600aeab041ae822368cb2e99d
 PrefabImporter:
+========
+guid: 791dac9cbfe6d8a48944e7cd20b78bb5
+DefaultImporter:
+>>>>>>>> 6d7ad5c26144db268fdddfaea9deb8b57a042b2f:Assets/Scenes/Oliver Workspace.unity.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
