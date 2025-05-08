@@ -20,7 +20,7 @@ public class EnemyBehaviour : MonoBehaviour
     private float tMove = 0f;
     [SerializeField] private AnimationCurve curveMove;
 
-    [SerializeField] private GameObject player;
+    [SerializeField] public GameObject player;
     private Vector3 playerPosition;
     [SerializeField] private States state;
 
@@ -167,10 +167,10 @@ public class EnemyBehaviour : MonoBehaviour
     
     private void Die()
     {
-        //gameObject.SetActive(false);
         // temporarily turned off dying for the sake of testing
-        health = 200f;
-        healthText.text = health.ToString() + "hp";
+        //health = 200f;
+        //healthText.text = health.ToString() + "hp";
+        gameObject.SetActive(false);
         playerLevelSystem.IncreaseExperience(50f);
     }
 
