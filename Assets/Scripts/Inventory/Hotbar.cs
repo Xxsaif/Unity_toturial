@@ -11,7 +11,7 @@ public class Hotbar : Inventory
     [HideInInspector] public bool canSwapItem;
     private readonly Color hotbarSlotActive = new(72f / 255f, 72f / 255f, 72f / 255f, 200f / 255f);
     private readonly Color hotbarSlotInactive = new(72f / 255f, 72f / 255f, 72f / 255f, 100f / 255f);
-    private bool hotbarActive;
+
     private bool canScroll;
     private readonly KeyCode[] numberKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0 };
     void Start()
@@ -24,8 +24,8 @@ public class Hotbar : Inventory
         }
         item_selected = false;
         canSwapItem = false;
-        hotbarActive = false;
         canScroll = true;
+        ActivateHotbar();
     }
 
 
@@ -54,41 +54,6 @@ public class Hotbar : Inventory
                 }
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.X) && !inventoryActive)
-        {
-            hotbarActive = !hotbarActive;
-
-            if (hotbarActive)
-            {
-                if (inventoryItems[selected_id] != null)
-                {
-                    inventoryItems[selected_id].gameObject.SetActive(true);
-                    item_selected = true;
-                }
-                inventorySlots[selected_id].slotImg.color = hotbarSlotActive;
-                canSwapItem = true;
-                UpdateAnimator();
-            }
-            else if (!hotbarActive)
-            {
-                if (canSwapItem)
-                {
-                    if (item_selected)
-                    {
-                        inventoryItems[selected_id].gameObject.SetActive(false);
-                        item_selected = false;
-                        animator.SetBool("Item_Equipped", false);
-                    }
-                    inventorySlots[selected_id].slotImg.color = hotbarSlotInactive;
-                    canSwapItem = false;
-                }
-                else
-                {
-                    hotbarActive = true;
-                }
-            }
-        }
     }
     public override int AddItem(Item.ItemType itemType, int q)
     {
@@ -114,7 +79,7 @@ public class Hotbar : Inventory
                 inventorySlots[y].slotIcon.text = inventoryItems[y].Name;
                 quantity -= Mathf.Clamp(quantity, 1, inventoryItems[y].stackLimit);
                 inventorySlots[y].slotQuantity.text = inventoryItems[y].quantity.ToString();
-                if (hotbarActive && inventoryItems[selected_id] != null)
+                if (inventoryItems[selected_id] != null)
                 {
                     inventoryItems[selected_id].gameObject.SetActive(true);
                     item_selected = true;
@@ -138,7 +103,7 @@ public class Hotbar : Inventory
             inventoryItems[toPos] = new Item(fromType, quantity);
             inventorySlots[toPos].slotIcon.text = inventoryItems[toPos].Name;
             inventorySlots[toPos].slotQuantity.text = inventoryItems[toPos].quantity.ToString();
-            if (hotbarActive && toPos == selected_id && inventoryItems[selected_id] != null)
+            if (toPos == selected_id && inventoryItems[selected_id] != null)
             {
                 inventoryItems[selected_id].gameObject.SetActive(true);
                 item_selected = true;
@@ -193,7 +158,7 @@ public class Hotbar : Inventory
         inventoryItems[fromPos] = null;
         inventorySlots[fromPos].slotIcon.text = string.Empty;
         inventorySlots[fromPos].slotQuantity.text = string.Empty;
-        if (hotbarActive && fromPos == selected_id)
+        if (fromPos == selected_id)
         {
             item_selected = false;
             UpdateAnimator();
@@ -227,5 +192,18 @@ public class Hotbar : Inventory
 
         yield return new WaitForSeconds(0.025f);
         canScroll = true;
+    }
+
+    public void ActivateHotbar()
+    {
+        if (inventoryItems[0] != null)
+        {
+            inventoryItems[0].gameObject.SetActive(true);
+            item_selected = true;
+        }
+
+        inventorySlots[0].GetComponent<Image>().color = hotbarSlotActive;
+        canSwapItem = true;
+        UpdateAnimator();
     }
 }

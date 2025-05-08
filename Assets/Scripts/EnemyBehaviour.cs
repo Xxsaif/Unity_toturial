@@ -10,6 +10,8 @@ using Unity.Mathematics;
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    private float baseMaxHealth = 200f;
+    private float maxHealth;
     [HideInInspector] public float health;
     [SerializeField] private TextMeshPro healthText; // Temporary health text, should be replaced with health bar
 
@@ -43,16 +45,21 @@ public class EnemyBehaviour : MonoBehaviour
     private Vector3 moveStartPos;
     private bool moveBack = false;
     private float t = 0f;
+    private PlayerLevelSystem playerLevelSystem;
+    private EnemyLevelSystem enemyLevelSystem;
     void Start()
     {
-        health = 200f;
         playerPosition = Vector3.zero;
 
         agent = GetComponent<NavMeshAgent>();
         agent.SetDestination(Vector3.zero);
 
         state = States.Searching;
-
+        playerLevelSystem = GameObject.Find("Player").GetComponent<PlayerLevelSystem>();
+        enemyLevelSystem = GetComponent<EnemyLevelSystem>();
+        maxHealth = baseMaxHealth * enemyLevelSystem.EnemyHealthMultiplier;
+        health = maxHealth;
+        healthText.text = Math.Round(health).ToString() + "hp";
     }
     
     void Update()
@@ -164,7 +171,7 @@ public class EnemyBehaviour : MonoBehaviour
         // temporarily turned off dying for the sake of testing
         health = 200f;
         healthText.text = health.ToString() + "hp";
-        LevelSystem.IncreaseExperience(50f);
+        playerLevelSystem.IncreaseExperience(50f);
     }
 
     private void Stop()
@@ -175,7 +182,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Attack()
     {
-        player.GetComponent<PlayerHealth>().TakeDamage(damage);
+        player.GetComponent<PlayerHealth>().TakeDamage(damage * enemyLevelSystem.EnemyDamageMultiplier);
         attacking = false;
     }
     

@@ -6,7 +6,7 @@ public class Blade : MonoBehaviour
     [SerializeField] private Weapon weapon;
     private Weapon weaponScr;
     private GameObject player;
-    private PlayerController playerMoveScr;
+    [SerializeField] private PlayerController playerMoveScr;
     
     
 
@@ -14,11 +14,10 @@ public class Blade : MonoBehaviour
     {
         weaponScr = weapon.GetComponent<Weapon>();
         player = GameObject.Find("Player");
-        playerMoveScr = player.GetComponent<PlayerController>();
        
     }
+ 
 
-    
     void Update()
     {
         

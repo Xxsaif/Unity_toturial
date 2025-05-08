@@ -14,9 +14,10 @@ public abstract class Weapon : MonoBehaviour
     protected Hotbar hotbar;
     protected Inventory inventory;
     protected bool attacking;
+    [SerializeField] protected PlayerLevelSystem playerLevelSystem;
     void Start()
     {
-        
+        //playerLevelSystem = GameObject.Find("Player").GetComponent<PlayerLevelSystem>();
     }
     
     void Update()
@@ -31,5 +32,5 @@ public abstract class Weapon : MonoBehaviour
 
     protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !inventory.inventoryActive;
 
-    public float Damage() => weaponData.damage * LevelSystem.PlayerDamageMultiplier;
+    public float Damage() => weaponData.damage * playerLevelSystem.PlayerDamageMultiplier;
 }

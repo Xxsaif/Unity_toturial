@@ -5,17 +5,23 @@ using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
-    private float maxHealth = 200f;
-    [HideInInspector] public float health;
+    public float baseMaxHealth = 200f;
+    public float maxHealth = 200f;
+    [HideInInspector] public static float health;
     [SerializeField] private TextMeshProUGUI healthText; // Temporary health text, should be replaced with health bar
 
     [SerializeField] private Transform spawnPoint;
-
+    private PlayerController movementScr;
+    private CharacterController characterController;
+    private PlayerLevelSystem playerLevelSystem;
     
 
     void Start()
     {
         health = maxHealth;
+        movementScr = GetComponent<PlayerController>();
+        characterController = GetComponent<CharacterController>();
+        playerLevelSystem = GetComponent<PlayerLevelSystem>();
     }
 
     
@@ -34,51 +40,29 @@ public class PlayerHealth : MonoBehaviour
     {
         health -= amount;
         healthText.text = health.ToString() + "HP";
-        if (health <= 1f)
+        if (health <= 0f)
         {
             Die();
         }
     }
 
-    private void Die()
+    public void UpdateMaxHealth()
     {
-        // Stäng av rörelse
-        var movement = GetComponent<PlayerController>();
-        if (movement != null)
-        {
-            movement.enabled = false;
-        }
-
-
-        // inaktivera character controller
-        var cc = GetComponent<CharacterController>();
-        if (cc != null)
-        {
-            cc.enabled = false;
-        }
-
-
-        // teleportera 
-        transform.position = spawnPoint.position;
-
-        // activate CharacterController
-        if (cc != null)
-        {
-            cc.enabled = true;
-        }
-
-        // aktivera rörelsen igen 
-        if (movement != null)
-        {
-            movement.enabled = true;
-        }
-
-        // Reseta health
-        health = maxHealth;
-        healthText.text = health.ToString() + "HP";
-
+        maxHealth = baseMaxHealth * playerLevelSystem.PlayerHealthMultiplier;
+        Heal(maxHealth);
     }
 
-  
+    private void Die()
+    {
+        movementScr.enabled = false;
+        characterController.enabled = false;
 
+        transform.position = spawnPoint.position;
+
+        characterController.enabled = true;
+        movementScr.enabled = true;
+
+        health = maxHealth;
+        healthText.text = health.ToString() + "HP";
+    }
 }

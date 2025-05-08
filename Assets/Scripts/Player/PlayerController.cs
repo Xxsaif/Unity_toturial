@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private float stamina = 5f; 
     private float maxStamina = 5f;
+    private float baseMaxStamina = 5f;
     private float staminaRegenRate = 1f;
     private float staminaDrainRate = 1f;
     private float exhausted = 0f;
@@ -32,12 +33,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
 
     public static bool inventoryActive;
+
+    private PlayerLevelSystem playerLevelSystem;
     void Start()
     {
         inventoryActive = false;
         controller = GetComponent<CharacterController>();
         grounded = true;
         moveSpeed = walkSpeed;
+        playerLevelSystem = GetComponent<PlayerLevelSystem>();
     }
 
     
@@ -116,7 +120,7 @@ public class PlayerController : MonoBehaviour
             if (exhausted > 0f)
             {
                 exhausted -= Time.deltaTime * staminaRegenRate;
-                exhausted = Mathf.Clamp(exhausted, 0f, 3f);
+                exhausted = Mathf.Clamp(exhausted, 0f, 0.6f * maxStamina);
             }
         }
         
@@ -127,5 +131,9 @@ public class PlayerController : MonoBehaviour
         isExhausted = IsExhausted();
     }
 
+    public void UpdateMaxStamina()
+    {
+        maxStamina = baseMaxStamina * playerLevelSystem.PlayerStaminaMultiplier;
+    }
     private bool IsExhausted() => exhausted > 0f;
 }
