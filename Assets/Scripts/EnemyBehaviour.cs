@@ -18,7 +18,7 @@ public class EnemyBehaviour : MonoBehaviour
     private float tMove = 0f;
     [SerializeField] private AnimationCurve curveMove;
 
-    [SerializeField] private GameObject player;
+    [SerializeField] public GameObject player;
     private Vector3 playerPosition;
     [SerializeField] private States state;
 
