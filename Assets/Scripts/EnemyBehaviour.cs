@@ -160,11 +160,11 @@ public class EnemyBehaviour : MonoBehaviour
     
     private void Die()
     {
-        //gameObject.SetActive(false);
+        gameObject.SetActive(false);
         // temporarily turned off dying for the sake of testing
-        health = 200f;
-        healthText.text = health.ToString() + "hp";
-        LevelSystem.IncreaseExperience(50f);
+        //health = 200f;
+        //healthText.text = health.ToString() + "hp";
+        //LevelSystem.IncreaseExperience(50f);
     }
 
     private void Stop()
