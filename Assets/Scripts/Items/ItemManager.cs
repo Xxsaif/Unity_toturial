@@ -37,6 +37,12 @@ public static class ItemManager
                 itemName = "Stick";
                 break;
 
+            case Item.ItemType.String:
+                gameObject = GetGameObject("String");
+                stackLimit = 16;
+                itemName = "String";
+                break;
+
         }
     }
 

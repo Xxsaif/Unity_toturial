@@ -25,7 +25,7 @@ public class EnemySpawner : MonoBehaviour
             if (timer >= currentSpawnInterval)
             {
                 SpawnEnemy();
-Debug.Log("Spawn");
+                Debug.Log("Spawn");
                 timer = 0f;
                 currentSpawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
             }

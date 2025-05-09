@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
     private float staminaDrainRate = 1f;
     private float exhausted = 0f;
     public bool isExhausted;
-    [SerializeField] private TextMeshProUGUI staminaText; // Temporary stamina text, could be replaced with stamina bar
+    [SerializeField] private Slider staminabarSlider;
 
     private float timer;
     [SerializeField] private TextMeshProUGUI timerText;
@@ -35,6 +36,9 @@ public class PlayerController : MonoBehaviour
     public static bool inventoryActive;
 
     private PlayerLevelSystem playerLevelSystem;
+    private readonly Color staminaNormalColor = new Color(95f, 95f, 95f, 170f) / 255f;
+    private readonly Color staminaExhaustedColor = new Color(255f, 0f, 0f, 170f) / 255f;
+    [SerializeField] private Image staminaBorder;
     void Start()
     {
         inventoryActive = false;
@@ -50,7 +54,6 @@ public class PlayerController : MonoBehaviour
         /* Skapar sfär vid positionen av groundcheck som är placerad vid spelarens fot. GroundDistance är radiusen av sfären. 
          * Den kollar om det finns något objekt på lagret ground (groundMask) som kolliderar med sfären och returnerar en bool. 
          */
-        //grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         timer += Time.deltaTime;
@@ -77,8 +80,8 @@ public class PlayerController : MonoBehaviour
                     moveSpeed = runSpeed;
                     stamina -= Time.deltaTime * staminaDrainRate;
                     stamina = Mathf.Clamp(stamina, 0f, maxStamina);
-                    staminaText.text = Math.Round(stamina, 1).ToString();
-                
+                    UpdateStaminaUI();
+
                 }
                 if (Math.Round(stamina, 1) == 0f)
                 {
@@ -114,23 +117,26 @@ public class PlayerController : MonoBehaviour
             {
                 stamina += Time.deltaTime * staminaRegenRate;
                 stamina = Mathf.Clamp(stamina, 0f, maxStamina);
-                staminaText.text = Math.Round(stamina, 1).ToString();
+                UpdateStaminaUI();
             }
 
             if (exhausted > 0f)
             {
                 exhausted -= Time.deltaTime * staminaRegenRate;
                 exhausted = Mathf.Clamp(exhausted, 0f, 0.6f * maxStamina);
+                
             }
         }
         
-        
-
-
+        staminaBorder.color = exhausted > 0f ? staminaExhaustedColor : staminaNormalColor;
         falling = velocity.y < -3f && !grounded;
         isExhausted = IsExhausted();
     }
 
+    private void UpdateStaminaUI()
+    {
+        staminabarSlider.value = stamina / maxStamina;
+    }
     public void UpdateMaxStamina()
     {
         maxStamina = baseMaxStamina * playerLevelSystem.PlayerStaminaMultiplier;

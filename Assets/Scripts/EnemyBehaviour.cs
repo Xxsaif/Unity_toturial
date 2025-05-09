@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 using Unity.Mathematics;
+using UnityEngine.UI;
 
 
 public class EnemyBehaviour : MonoBehaviour
@@ -13,7 +14,7 @@ public class EnemyBehaviour : MonoBehaviour
     private float baseMaxHealth = 200f;
     private float maxHealth;
     [HideInInspector] public float health;
-    [SerializeField] private TextMeshPro healthText; // Temporary health text, should be replaced with health bar
+    [SerializeField] private TextMeshProUGUI healthText; // Temporary health text, should be replaced with health bar
 
     [SerializeField] private NavMeshAgent agent;
     private float moveSpeed;
@@ -47,10 +48,13 @@ public class EnemyBehaviour : MonoBehaviour
     private float t = 0f;
     private PlayerLevelSystem playerLevelSystem;
     private EnemyLevelSystem enemyLevelSystem;
+    [SerializeField] private Slider healthbarSlider;
+    private Camera playerCam;
+    [SerializeField] private Visable visableScr;
+    [SerializeField] private Collider objCollider;
     void Start()
     {
         playerPosition = Vector3.zero;
-
         agent = GetComponent<NavMeshAgent>();
         agent.SetDestination(Vector3.zero);
 
@@ -59,7 +63,8 @@ public class EnemyBehaviour : MonoBehaviour
         enemyLevelSystem = GetComponent<EnemyLevelSystem>();
         maxHealth = baseMaxHealth * enemyLevelSystem.EnemyHealthMultiplier;
         health = maxHealth;
-        healthText.text = Math.Round(health).ToString() + "hp";
+        UpdateHealthUI();
+        playerCam = GameObject.Find("PlayerCam").GetComponent<Camera>();
     }
     
     void Update()
@@ -154,11 +159,21 @@ public class EnemyBehaviour : MonoBehaviour
             }
         }
 
+        Vector3 healthbarPosition = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
+        healthbarSlider.gameObject.SetActive(Physics.Raycast(healthbarPosition, playerCam.transform.position - healthbarPosition, Vector3.Distance(healthbarPosition, playerCam.transform.position), playerMask) && GeometryUtility.TestPlanesAABB(GeometryUtility.CalculateFrustumPlanes(playerCam), objCollider.bounds));
+        if (healthbarSlider.gameObject.activeSelf)
+        {
+            healthbarSlider.gameObject.transform.position = playerCam.WorldToScreenPoint(healthbarPosition);
+            float scale = 1.2f/Vector3.Distance(transform.position, playerPosition);
+            healthbarSlider.gameObject.transform.localScale = new Vector3(scale, scale, scale);
+        }
+
     }
+
     public void TakeDmg(float dmg)
     {
         health -= dmg;
-        healthText.text = Math.Round(health).ToString() + "hp";
+        UpdateHealthUI();
         if (health <= 0f)
         {
             Die();
@@ -207,6 +222,12 @@ public class EnemyBehaviour : MonoBehaviour
     private void AttackAni()
     {
         animator.SetTrigger("zombieAttack");
+    }
+
+    private void UpdateHealthUI()
+    {
+        healthText.text = Mathf.Round(health).ToString();
+        healthbarSlider.value = health / maxHealth;
     }
     public bool Attacking() => animator.GetCurrentAnimatorStateInfo(0).IsName("zombie_attack");
     private enum States

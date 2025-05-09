@@ -23,6 +23,8 @@ public class Inventory : MonoBehaviour
         AddItem(Item.ItemType.Sword, 2);
         AddItem(Item.ItemType.Medkit, 7);
         AddItem(Item.ItemType.Rock, 24);
+        AddItem(Item.ItemType.Stick, 12);
+        AddItem(Item.ItemType.String, 12);
     }
 
 
