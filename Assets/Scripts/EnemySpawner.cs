@@ -6,7 +6,7 @@ public class EnemySpawner : MonoBehaviour
 {
     public GameObject player;
     public GameObject enemyPrefab;
-    public float spawnRadius = 10f;
+    public float spawnRadius = EnemyBehaviour.searchDistance * 1.5f; // Spawn radius should be longer than the search distance, that way the player isn't always immediatelly detected when the zombie spawns
     public float minSpawnInterval = 3f;
     public float maxSpawnInterval = 8f;
 

@@ -11,47 +11,59 @@ using UnityEngine.UI;
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    // Health
     private float baseMaxHealth = 200f;
     private float maxHealth;
     [HideInInspector] public float health;
-    [SerializeField] private TextMeshProUGUI healthText; // Temporary health text, should be replaced with health bar
+    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private Slider healthbarSlider;
+    [SerializeField] private Collider objCollider;
+    [SerializeField] private Visable visableScr;
 
-    [SerializeField] private NavMeshAgent agent;
-    private float moveSpeed;
-    private float tMove = 0f;
-    [SerializeField] private AnimationCurve curveMove;
+    // Attack
+    private float baseDamage = 30f;
+    private float damage;
+    private float attackInterval = 1f;
 
-    [SerializeField] public GameObject player;
-    private Vector3 playerPosition;
-    [SerializeField] private States state;
-
-    private float damage = 30f;
-
-    [SerializeField] private Animator animator;
-    [SerializeField] private GameObject model;
-
+    // Layermasks
     [SerializeField] private LayerMask playerMask;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private LayerMask wallMask;
+
+    // State radius
+    [HideInInspector] public static readonly float searchDistance = 40f;
     private float detectionRadius = 25f;
-    private float attackRadius = 2f;
+    private float attackRadius = 2.5f;
+
+    // State bools
+    [SerializeField] private bool playerDetected = false;
     [SerializeField] private bool canAttack = false;
     private bool attacking = false;
-    [SerializeField] private bool playerDetected = false;
-    private System.Random r = new System.Random();
-    private readonly float distance = 40f;
     private bool wasChasing = true;
-    private int loopNum = 0;
 
-    private Vector3 moveStartPos;
+    // Walk animation fix system
     private bool moveBack = false;
+    private Vector3 moveStartPos;
+    private float tMove = 0f;
+    private int loopNum = 0;
     private float t = 0f;
+
+    // Player
     private PlayerLevelSystem playerLevelSystem;
-    private EnemyLevelSystem enemyLevelSystem;
-    [SerializeField] private Slider healthbarSlider;
+    [SerializeField] public GameObject player;
+    private Vector3 playerPosition;
     private Camera playerCam;
-    [SerializeField] private Visable visableScr;
-    [SerializeField] private Collider objCollider;
+
+    // Miscellaneous
+    [SerializeField] private AnimationCurve curveMove;
+    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject model;
+    [SerializeField] private States state;
+    private System.Random r = new System.Random();
+    private EnemyLevelSystem enemyLevelSystem;
+    private float moveSpeed;
+    
     void Start()
     {
         playerPosition = Vector3.zero;
@@ -65,6 +77,8 @@ public class EnemyBehaviour : MonoBehaviour
         health = maxHealth;
         UpdateHealthUI();
         playerCam = GameObject.Find("PlayerCam").GetComponent<Camera>();
+
+        damage = baseDamage * enemyLevelSystem.EnemyDamageMultiplier;
     }
     
     void Update()
@@ -84,7 +98,7 @@ public class EnemyBehaviour : MonoBehaviour
 
                 if (!Attacking() && !attacking)
                 {
-                    Invoke(nameof(Attack), 1f);
+                    Invoke(nameof(Attack), attackInterval);
                     AttackAni();
                     attacking = true;
                 }
@@ -114,7 +128,7 @@ public class EnemyBehaviour : MonoBehaviour
                     {
                         Vector3 destination = new(r.Next(-100, 100), 0f, r.Next(-100, 100));
                         destination.Normalize();
-                        destination = destination * distance + playerPosition;
+                        destination = destination * searchDistance + playerPosition;
                         for (float i = 1; i < 6; i++)
                         {
                             if (Physics.Raycast(new Vector3(destination.x, destination.y + i, destination.z), Vector3.down, out RaycastHit info, 10f, groundMask) && !Physics.CheckSphere(info.point, 1f, wallMask))
@@ -182,9 +196,6 @@ public class EnemyBehaviour : MonoBehaviour
     
     private void Die()
     {
-        // temporarily turned off dying for the sake of testing
-        //health = 200f;
-        //healthText.text = health.ToString() + "hp";
         gameObject.SetActive(false);
         playerLevelSystem.IncreaseExperience(50f);
     }
@@ -197,7 +208,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Attack()
     {
-        player.GetComponent<PlayerHealth>().TakeDamage(damage * enemyLevelSystem.EnemyDamageMultiplier);
+        player.GetComponent<PlayerHealth>().TakeDamage(damage);
         attacking = false;
     }
     
