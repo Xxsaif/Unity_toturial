@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Outline_Mat
+  m_Name: Outline_Mat 1
   m_Shader: {fileID: -6465566751694194690, guid: 6a7374214747fff49b6fa6abdf8279bb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -41,13 +41,13 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Scale: 1.1
-    - _X: 1.1
-    - _Y: 1.025
-    - _Z: 1.1
+    - _X: 1.05
+    - _Y: 1.0125
+    - _Z: 1.05
     m_Colors:
     - _Base_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 0.15686275, b: 0, a: 0}
-    - _Outline_Color: {r: 0.7924528, g: 0, b: 0, a: 0}
+    - _Outline_Color: {r: 0.41509432, g: 0, b: 0.022307575, a: 0}
     - _Scale: {r: 1.2, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

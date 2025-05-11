@@ -6,6 +6,8 @@ public class MouseLook : MonoBehaviour
     private float xRotation = 0f;
 
     [SerializeField] private GameObject player;
+    [SerializeField] private Transform water;
+    [SerializeField] private GameObject underWaterHud;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -30,6 +32,7 @@ public class MouseLook : MonoBehaviour
             player.transform.Rotate(Vector3.up * mouseX);
         }
 
+        underWaterHud.SetActive(InWater());
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -37,4 +40,6 @@ public class MouseLook : MonoBehaviour
             Cursor.visible = true;
         }
     }
+
+    private bool InWater() => transform.position.y < water.position.y;
 }

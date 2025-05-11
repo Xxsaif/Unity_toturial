@@ -472,7 +472,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "1c77f0e675ac470aa9dca35fdbaa4d22",
     "m_Id": 0,
-    "m_DisplayName": "Color",
+    "m_DisplayName": "Outline Color",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1723,10 +1723,10 @@
     "m_Guid": {
         "m_GuidSerialized": "92c02ac2-e569-4a27-b132-6b137ce0e6d5"
     },
-    "m_Name": "Color",
+    "m_Name": "Outline Color",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Color",
-    "m_DefaultReferenceName": "_Color",
+    "m_RefNameGeneratedByDisplayName": "Outline Color",
+    "m_DefaultReferenceName": "_Outline_Color",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

@@ -50,7 +50,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     // Player
     private PlayerLevelSystem playerLevelSystem;
-    [SerializeField] public GameObject player;
+    [HideInInspector] public GameObject player;
     private Vector3 playerPosition;
     private Camera playerCam;
 
@@ -69,9 +69,9 @@ public class EnemyBehaviour : MonoBehaviour
         playerPosition = Vector3.zero;
         agent = GetComponent<NavMeshAgent>();
         agent.SetDestination(Vector3.zero);
-
+        player = GameObject.Find("Player");
         state = States.Searching;
-        playerLevelSystem = GameObject.Find("Player").GetComponent<PlayerLevelSystem>();
+        playerLevelSystem = player.GetComponent<PlayerLevelSystem>();
         enemyLevelSystem = GetComponent<EnemyLevelSystem>();
         maxHealth = baseMaxHealth * enemyLevelSystem.EnemyHealthMultiplier;
         health = maxHealth;
