@@ -8,5 +8,8 @@ public class QuestTrigger : MonoBehaviour
         {
             Debug.Log("Collider works");
         }
+
+
+
     }
 }
