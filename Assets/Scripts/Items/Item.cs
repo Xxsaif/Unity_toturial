@@ -23,6 +23,7 @@ public class Item
         Axe,
         Medkit,
         Rock,
-        Stick
+        Stick,
+        String
     }
 }

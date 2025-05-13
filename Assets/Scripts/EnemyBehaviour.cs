@@ -6,60 +6,79 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 using Unity.Mathematics;
+using UnityEngine.UI;
 
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    // Health
     private float baseMaxHealth = 200f;
     private float maxHealth;
     [HideInInspector] public float health;
-    [SerializeField] private TextMeshPro healthText; // Temporary health text, should be replaced with health bar
+    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private Slider healthbarSlider;
+    [SerializeField] private Collider objCollider;
+    [SerializeField] private Visable visableScr;
 
-    [SerializeField] private NavMeshAgent agent;
-    private float moveSpeed;
-    private float tMove = 0f;
-    [SerializeField] private AnimationCurve curveMove;
+    // Attack
+    private float baseDamage = 30f;
+    private float damage;
+    private float attackInterval = 1f;
 
-    [SerializeField] public GameObject player;
-    private Vector3 playerPosition;
-    [SerializeField] private States state;
-
-    private float damage = 30f;
-
-    [SerializeField] private Animator animator;
-    [SerializeField] private GameObject model;
-
+    // Layermasks
     [SerializeField] private LayerMask playerMask;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private LayerMask wallMask;
+
+    // State radius
+    [HideInInspector] public static readonly float searchDistance = 40f;
     private float detectionRadius = 25f;
-    private float attackRadius = 2f;
+    private float attackRadius = 2.5f;
+
+    // State bools
+    [SerializeField] private bool playerDetected = false;
     [SerializeField] private bool canAttack = false;
     private bool attacking = false;
-    [SerializeField] private bool playerDetected = false;
-    private System.Random r = new System.Random();
-    private readonly float distance = 40f;
     private bool wasChasing = true;
-    private int loopNum = 0;
 
-    private Vector3 moveStartPos;
+    // Walk animation fix system
     private bool moveBack = false;
+    private Vector3 moveStartPos;
+    private float tMove = 0f;
+    private int loopNum = 0;
     private float t = 0f;
+
+    // Player
     private PlayerLevelSystem playerLevelSystem;
+    [HideInInspector] public GameObject player;
+    private Vector3 playerPosition;
+    private Camera playerCam;
+
+    // Miscellaneous
+    [SerializeField] private AnimationCurve curveMove;
+    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject model;
+    [SerializeField] private States state;
+    private System.Random r = new System.Random();
     private EnemyLevelSystem enemyLevelSystem;
+    private float moveSpeed;
+    
     void Start()
     {
         playerPosition = Vector3.zero;
-
         agent = GetComponent<NavMeshAgent>();
         agent.SetDestination(Vector3.zero);
-
+        player = GameObject.Find("Player");
         state = States.Searching;
-        playerLevelSystem = GameObject.Find("Player").GetComponent<PlayerLevelSystem>();
+        playerLevelSystem = player.GetComponent<PlayerLevelSystem>();
         enemyLevelSystem = GetComponent<EnemyLevelSystem>();
         maxHealth = baseMaxHealth * enemyLevelSystem.EnemyHealthMultiplier;
         health = maxHealth;
-        healthText.text = Math.Round(health).ToString() + "hp";
+        UpdateHealthUI();
+        playerCam = GameObject.Find("PlayerCam").GetComponent<Camera>();
+
+        damage = baseDamage * enemyLevelSystem.EnemyDamageMultiplier;
     }
     
     void Update()
@@ -79,7 +98,7 @@ public class EnemyBehaviour : MonoBehaviour
 
                 if (!Attacking() && !attacking)
                 {
-                    Invoke(nameof(Attack), 1f);
+                    Invoke(nameof(Attack), attackInterval);
                     AttackAni();
                     attacking = true;
                 }
@@ -109,7 +128,7 @@ public class EnemyBehaviour : MonoBehaviour
                     {
                         Vector3 destination = new(r.Next(-100, 100), 0f, r.Next(-100, 100));
                         destination.Normalize();
-                        destination = destination * distance + playerPosition;
+                        destination = destination * searchDistance + playerPosition;
                         for (float i = 1; i < 6; i++)
                         {
                             if (Physics.Raycast(new Vector3(destination.x, destination.y + i, destination.z), Vector3.down, out RaycastHit info, 10f, groundMask) && !Physics.CheckSphere(info.point, 1f, wallMask))
@@ -154,11 +173,21 @@ public class EnemyBehaviour : MonoBehaviour
             }
         }
 
+        Vector3 healthbarPosition = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
+        healthbarSlider.gameObject.SetActive(Physics.Raycast(healthbarPosition, playerCam.transform.position - healthbarPosition, Vector3.Distance(healthbarPosition, playerCam.transform.position), playerMask) && GeometryUtility.TestPlanesAABB(GeometryUtility.CalculateFrustumPlanes(playerCam), objCollider.bounds));
+        if (healthbarSlider.gameObject.activeSelf)
+        {
+            healthbarSlider.gameObject.transform.position = playerCam.WorldToScreenPoint(healthbarPosition);
+            float scale = 1.2f/Vector3.Distance(transform.position, playerPosition);
+            healthbarSlider.gameObject.transform.localScale = new Vector3(scale, scale, scale);
+        }
+
     }
+
     public void TakeDmg(float dmg)
     {
         health -= dmg;
-        healthText.text = Math.Round(health).ToString() + "hp";
+        UpdateHealthUI();
         if (health <= 0f)
         {
             Die();
@@ -167,9 +196,6 @@ public class EnemyBehaviour : MonoBehaviour
     
     private void Die()
     {
-        // temporarily turned off dying for the sake of testing
-        //health = 200f;
-        //healthText.text = health.ToString() + "hp";
         gameObject.SetActive(false);
         playerLevelSystem.IncreaseExperience(50f);
     }
@@ -182,7 +208,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Attack()
     {
-        player.GetComponent<PlayerHealth>().TakeDamage(damage * enemyLevelSystem.EnemyDamageMultiplier);
+        player.GetComponent<PlayerHealth>().TakeDamage(damage);
         attacking = false;
     }
     
@@ -207,6 +233,12 @@ public class EnemyBehaviour : MonoBehaviour
     private void AttackAni()
     {
         animator.SetTrigger("zombieAttack");
+    }
+
+    private void UpdateHealthUI()
+    {
+        healthText.text = Mathf.Round(health).ToString();
+        healthbarSlider.value = health / maxHealth;
     }
     public bool Attacking() => animator.GetCurrentAnimatorStateInfo(0).IsName("zombie_attack");
     private enum States

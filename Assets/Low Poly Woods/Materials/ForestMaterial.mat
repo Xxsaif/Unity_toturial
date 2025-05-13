@@ -162,8 +162,8 @@ Material:
     - __Obsolete_AutumnSeed: 0.5
     - __Obsolete_IsAutumn: 0
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.26415092, b: 0.0118970135, a: 1}
-    - _Color: {r: 0, g: 0.2641509, b: 0.0118970135, a: 1}
+    - _BaseColor: {r: 0.3773585, g: 0.21805401, b: 0.16909933, a: 1}
+    - _Color: {r: 0.37735847, g: 0.21805397, b: 0.1690993, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoliageColor: {r: 0, g: 0, b: 0, a: 0}
     - _FolliageColor: {r: 0.8018868, g: 0.6540207, b: 0.34420612, a: 0}

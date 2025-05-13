@@ -1,14 +1,20 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 
 public class PlayerHealth : MonoBehaviour
 {
     public float baseMaxHealth = 200f;
     public float maxHealth = 200f;
-    [HideInInspector] public static float health;
-    [SerializeField] private TextMeshProUGUI healthText; // Temporary health text, should be replaced with health bar
+    [HideInInspector] public float health;
+    private float newHealth;
+    private float oldHealth;
+    private float t;
+
+    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private Slider healthbarSlider;
 
     [SerializeField] private Transform spawnPoint;
     private PlayerController movementScr;
@@ -19,31 +25,38 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         health = maxHealth;
+        newHealth = health;
         movementScr = GetComponent<PlayerController>();
         characterController = GetComponent<CharacterController>();
         playerLevelSystem = GetComponent<PlayerLevelSystem>();
     }
 
-    
-    void Update()
+    public void Update()
     {
-        
+        if (health != newHealth)
+        {
+            t += Time.deltaTime * 10f;
+            health = Mathf.Clamp(Mathf.Lerp(oldHealth, newHealth, t), 0f, maxHealth);
+            if (health <= 0f)
+            {
+                Die();
+            }
+            UpdateHealthUI();
+        }
     }
 
     public void Heal(float amount)
     {
-        health += amount;
-        health = Mathf.Clamp(health, 0, maxHealth);
-        healthText.text = health.ToString() + "HP";
+        t = 0;
+        oldHealth = health;
+        newHealth = health + amount;
     }
     public void TakeDamage(float amount)
     {
-        health -= amount;
-        healthText.text = health.ToString() + "HP";
-        if (health <= 0f)
-        {
-            Die();
-        }
+        t = 0;
+        oldHealth = health;
+        newHealth = health - amount;
+        
     }
 
     public void UpdateMaxHealth()
@@ -62,7 +75,13 @@ public class PlayerHealth : MonoBehaviour
         characterController.enabled = true;
         movementScr.enabled = true;
 
-        health = maxHealth;
-        healthText.text = health.ToString() + "HP";
+        oldHealth = health;
+        newHealth = maxHealth;
+    }
+
+    private void UpdateHealthUI()
+    {
+        healthText.text = Mathf.Round(health).ToString();
+        healthbarSlider.value = health / maxHealth;
     }
 }
