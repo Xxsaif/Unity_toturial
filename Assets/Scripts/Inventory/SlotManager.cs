@@ -27,7 +27,6 @@ public class SlotManager : MonoBehaviour
             //Debug.Log("hovered: " + (hoveredSlotScr == null) + ", caller: " + (callerSlotScr == null));
             if (hoveredSlotScr.hovered && hoveredSlot != caller && (hoveredSlotScr.inventory.inventoryItems[hoveredSlotScr.slotInventoryPos] == null || hoveredSlotScr.inventory.inventoryItems[hoveredSlotScr.slotInventoryPos].itemType == callerSlotScr.inventory.inventoryItems[callerSlotScr.slotInventoryPos].itemType))
             {
-
                 //Debug.Log(callerSlotScr.inventory.gameObject.name + " -> " + hoveredSlotScr.inventory.gameObject.name + " | " + quantity + " | " + callerSlotScr.slotInventoryPos + " -> " + hoveredSlotScr.slotInventoryPos);
                 inventorySystem.MoveItem(callerSlotScr.inventory, hoveredSlotScr.inventory, callerSlotScr.slotInventoryPos, hoveredSlotScr.slotInventoryPos, quantity);
             }

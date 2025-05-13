@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7745132270752939904}
-  m_Layer: 0
+  - component: {fileID: 3738442934087040444}
+  m_Layer: 6
   m_Name: fence_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23,6 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 76955351531467423}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -33,8 +35,28 @@ Transform:
   - {fileID: 6596708481354806279}
   - {fileID: 4132194699694514660}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3738442934087040444
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76955351531467423}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.913413, y: 1.3428388, z: 0.26335922}
+  m_Center: {x: -0.10424185, y: 0.66251373, z: 0.030114248}
 --- !u!1 &1100019725600720157
 GameObject:
   m_ObjectHideFlags: 0
@@ -46,7 +68,7 @@ GameObject:
   - component: {fileID: 7082563125916755324}
   - component: {fileID: 8977844489386173725}
   - component: {fileID: 2808039613374865152}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: fences_horizontal_part_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,13 +82,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100019725600720157}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.00011937562, y: -0.006194373, z: 0.01926767, w: 0.99979514}
   m_LocalPosition: {x: -0.075, y: 0.771, z: 0.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7745132270752939904}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -0.71, z: 2.208}
 --- !u!33 &8977844489386173725
 MeshFilter:
@@ -93,6 +115,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -129,7 +154,7 @@ GameObject:
   - component: {fileID: 459193458145007088}
   - component: {fileID: 5320991491026404812}
   - component: {fileID: 5094521135023331273}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: fences_horizontal_part_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,13 +168,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4759181580055858554}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.0009319644, y: -0.0022569387, z: 0.0355912, w: 0.9993635}
   m_LocalPosition: {x: -0.103, y: 0.218, z: 0.058}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7745132270752939904}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -0.098, y: -0.262, z: 4.08}
 --- !u!33 &5320991491026404812
 MeshFilter:
@@ -176,6 +201,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -212,7 +240,7 @@ GameObject:
   - component: {fileID: 6596708481354806279}
   - component: {fileID: 5855936561126871491}
   - component: {fileID: 233570301373318943}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: fences_vertical_part_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,13 +254,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6311364415675078877}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7745132270752939904}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5855936561126871491
 MeshFilter:
@@ -259,6 +287,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -295,7 +326,7 @@ GameObject:
   - component: {fileID: 4132194699694514660}
   - component: {fileID: 3355340019970568832}
   - component: {fileID: 8922697976513351702}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: fences_vertical_part_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -309,13 +340,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7637169768226588421}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -1.406, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7745132270752939904}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3355340019970568832
 MeshFilter:
@@ -342,6 +373,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

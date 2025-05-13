@@ -8,10 +8,12 @@ public class DroppedItem : MonoBehaviour, InteractableObject
     public Item.ItemType type;
     public int quantity;
     [SerializeField] private TextMeshProUGUI interactionText;
+    [SerializeField] private GameObject[] objects;
     void Start()
     {
         inventory = GameObject.Find("Player").GetComponent<Inventory>();
         item = new Item(type, quantity);
+        objects[(int)type].SetActive(true);
     }
 
     void Update()
@@ -36,8 +38,8 @@ public class DroppedItem : MonoBehaviour, InteractableObject
     public void Interact()
     {
         inventory.AddItem(type, quantity);
-        gameObject.SetActive(false);
         interactionText.text = string.Empty;
+        gameObject.SetActive(false);
     }
     
 }

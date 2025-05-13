@@ -34,6 +34,16 @@ public class Blade : MonoBehaviour
             }
             weaponScr.enemiesHit.Add(other.gameObject); // adds enemy to list of enemies hit to make sure that the same enemy can't be hit twice from the same attack
         }
+
+        if (other.gameObject.TryGetComponent<EnemySpawner>(out _))
+        {
+            EnemySpawner enemySpawner = other.GetComponent<EnemySpawner>();
+            if (enemySpawner != null)
+            {
+                enemySpawner.TakeDamage(weaponScr.Damage());
+            }
+            weaponScr.enemiesHit.Add(other.gameObject);
+        }
     }
 
     private IEnumerator Knockback(GameObject enemy)

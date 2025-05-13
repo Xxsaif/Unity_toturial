@@ -19,12 +19,7 @@ public class Inventory : MonoBehaviour
             inventorySlots[i].inventory = this;
             inventorySlots[i].slotInventoryPos = i;
         }
-        AddItem(Item.ItemType.Axe, 2);
-        AddItem(Item.ItemType.Sword, 2);
-        AddItem(Item.ItemType.Medkit, 7);
-        AddItem(Item.ItemType.Rock, 24);
-        AddItem(Item.ItemType.Stick, 12);
-        AddItem(Item.ItemType.String, 12);
+        
     }
 
 

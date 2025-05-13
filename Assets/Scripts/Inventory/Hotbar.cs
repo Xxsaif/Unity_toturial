@@ -25,6 +25,7 @@ public class Hotbar : Inventory
         item_selected = false;
         canSwapItem = false;
         canScroll = true;
+        AddItem(Item.ItemType.Axe, 1);
         ActivateHotbar();
     }
 

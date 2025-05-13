@@ -10,12 +10,13 @@ public class SlotIcon : MonoBehaviour
 {
     private Vector3 startPos;
     [HideInInspector] public bool isBeingDragged;
-    [SerializeField] private SlotManager slotManager;
+    private SlotManager slotManager;
     private int inventorySlotPos = -1;
     private KeyCode mousekey;
     
     void Start()
     {
+        slotManager = GameObject.Find("Player").GetComponent<SlotManager>();
         startPos = transform.localPosition;
         
     }
@@ -47,6 +48,7 @@ public class SlotIcon : MonoBehaviour
         {
             transform.localPosition = startPos;
             isBeingDragged = false;
+            
             slotManager.TryMoveItem(gameObject.transform.parent.gameObject, mousekey == KeyCode.Mouse0 ? 1 : mousekey == KeyCode.Mouse1 ? gameObject.transform.parent.gameObject.GetComponent<Slot>().inventory.inventoryItems[inventorySlotPos].quantity : 0);
             gameObject.GetComponent<TextMeshProUGUI>().raycastTarget = true;
         }

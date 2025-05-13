@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1621483263914034957}
   - component: {fileID: 5909995886094915528}
   - component: {fileID: -7007912158798236859}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pile of dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}

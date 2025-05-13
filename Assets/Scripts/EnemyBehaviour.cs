@@ -18,7 +18,6 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Slider healthbarSlider;
     [SerializeField] private Collider objCollider;
-    [SerializeField] private Visable visableScr;
 
     // Attack
     private float baseDamage = 30f;
