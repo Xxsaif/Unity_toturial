@@ -3,7 +3,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.Properties;
 using TMPro;
-
+// Created by Saif Al-Temmemi
+// Edited by Herman Bergström
 public class Door : MonoBehaviour, InteractableObject
 {
     private readonly float[] openRotations = { 90f, -90f };

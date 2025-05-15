@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+// Created by Herman Bergström
 public class Slot : MonoBehaviour
 {
     [HideInInspector] public bool hovered;

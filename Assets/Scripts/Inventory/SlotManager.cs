@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 using UnityEngine;
-
+// Created by Herman Bergström
 public class SlotManager : MonoBehaviour
 {
     [HideInInspector] public InventorySystem inventorySystem;

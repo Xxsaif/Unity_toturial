@@ -1,6 +1,6 @@
 using TMPro;
 using UnityEngine;
-
+// Created by Herman Bergström
 public class PlayerInteractions : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI interactionText;

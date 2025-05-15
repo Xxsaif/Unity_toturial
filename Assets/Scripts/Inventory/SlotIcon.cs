@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-
+// Created by Herman Bergström
 public class SlotIcon : MonoBehaviour
 {
     private Vector3 startPos;

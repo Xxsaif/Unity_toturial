@@ -1,5 +1,5 @@
 using UnityEngine;
-
+// Created by Herman Bergström
 interface InteractableObject
 {
 

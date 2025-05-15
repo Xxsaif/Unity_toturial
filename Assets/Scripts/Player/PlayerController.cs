@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 using UnityEngine.UI;
-
+// Created by Herman Bergström
 public class PlayerController : MonoBehaviour
 {
     private float moveSpeed;
@@ -24,8 +24,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     private Vector3 velocity;
 
-    private float stamina = 5f; 
-    private float maxStamina = 5f;
+    private float stamina; 
+    private float maxStamina;
     private float baseMaxStamina = 5f;
     private float staminaRegenRate = 1f;
     private float staminaDrainRate = 1f;
@@ -46,6 +46,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        maxStamina = baseMaxStamina;
+        stamina = maxStamina;
         inventoryActive = false;
         controller = GetComponent<CharacterController>();
         grounded = true;

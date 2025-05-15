@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+// Created by Herman Bergström
 
 public class PlayerHealth : MonoBehaviour
 {

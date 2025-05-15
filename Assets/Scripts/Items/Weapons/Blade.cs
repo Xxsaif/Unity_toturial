@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-
+// Created by Herman Bergström
 public class Blade : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;

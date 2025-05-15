@@ -2,7 +2,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+// Created by Herman Bergström
 public abstract class Weapon : MonoBehaviour
 {
     

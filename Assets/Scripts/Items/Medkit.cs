@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+// Created by Herman Bergström
 public class Medkit : MonoBehaviour
 {
     private PlayerHealth playerHealthScr;

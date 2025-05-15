@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // Made by Louis Gericke
-
+// Edited by Herman Bergström
 public class EnemySpawner : MonoBehaviour
 {
     public GameObject player;

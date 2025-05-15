@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
-
+// Created by Herman Bergström
 public class DataCollection : MonoBehaviour
 {
     private float timer = 0f;

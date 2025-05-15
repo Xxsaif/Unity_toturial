@@ -1,5 +1,5 @@
 using UnityEngine;
-
+// Created by Herman Bergström
 public class MouseLook : MonoBehaviour
 {
     private float sensitivity = 200f;

@@ -69,7 +69,7 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _HorizonLineContribution: 0
-    - _HorizonLineExponent: 0
+    - _HorizonLineExponent: 10.7731905
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -91,7 +91,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HorizonLineColor: {r: 0.3529412, g: 0.60784316, b: 1, a: 0}
     - _SkyGradientBottom: {r: 0, g: 0.3410201, b: 0.4528302, a: 0}
-    - _SkyGradientTop: {r: 0, g: 0, b: 0, a: 0}
+    - _SkyGradientTop: {r: 0, g: 0, b: 0, a: 1}
     - _SunDiscColor: {r: 1, g: 0.97912896, b: 0.9103774, a: 1}
     - _SunHaloColor: {r: 1, g: 0, b: 0, a: 0.003921569}
   m_BuildTextureStacks: []

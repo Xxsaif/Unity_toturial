@@ -3,7 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+// Created by Herman Bergström
 public class Inventory : MonoBehaviour
 {
     [SerializeField] private GameObject inventoryScreen;
@@ -73,7 +73,6 @@ public class Inventory : MonoBehaviour
             if (inventoryItems[y] == null)
             {
                 inventoryItems[y] = new Item(itemType, quantity);
-                //Debug.Log(inventorySlots[y].slotIcon == null);
                 inventorySlots[y].slotIcon.text = inventoryItems[y].Name;
                 quantity -= Mathf.Clamp(quantity, 1, inventoryItems[y].stackLimit);
                 inventorySlots[y].slotQuantity.text = inventoryItems[y].quantity.ToString();
@@ -122,5 +121,17 @@ public class Inventory : MonoBehaviour
         {
             inventorySlots[fromPos].slotQuantity.text = inventoryItems[fromPos].quantity.ToString();
         }
+    }
+
+    public bool ContainsType(Item.ItemType type)
+    {
+        foreach (Item item in inventoryItems)
+        {
+            if (item != null && item.itemType == type)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

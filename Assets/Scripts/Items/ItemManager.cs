@@ -1,6 +1,6 @@
 using UnityEngine;
 
-
+// Created by Herman Bergström
 public static class ItemManager
 {
     public static void SelectData(Item.ItemType itemType, ref GameObject gameObject, ref int stackLimit, ref string itemName)

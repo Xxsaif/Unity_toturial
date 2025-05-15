@@ -1,6 +1,6 @@
 using TMPro;
 using UnityEngine;
-
+// Created by Herman Bergström
 public class DroppedItem : MonoBehaviour, InteractableObject
 {
     private Inventory inventory;
@@ -9,16 +9,30 @@ public class DroppedItem : MonoBehaviour, InteractableObject
     public int quantity;
     [SerializeField] private TextMeshProUGUI interactionText;
     [SerializeField] private GameObject[] objects;
+    [SerializeField] private GameObject placementIndicator;
+    [SerializeField] private GameObject waypoint;
+    private Camera playerCam;
+    private Transform playerTransform;
+    [SerializeField] private Collider objCollider;
+    [HideInInspector] public bool waypointActive;
     void Start()
     {
-        inventory = GameObject.Find("Player").GetComponent<Inventory>();
+        GameObject player = GameObject.Find("Player");
+        inventory = player.GetComponent<Inventory>();
+        playerTransform = player.GetComponent<Transform>();
         item = new Item(type, quantity);
+        placementIndicator.SetActive(false);
         objects[(int)type].SetActive(true);
+        playerCam = GameObject.Find("PlayerCam").GetComponent<Camera>();
     }
 
     void Update()
     {
-        
+        waypoint.SetActive(waypointActive && GeometryUtility.TestPlanesAABB(GeometryUtility.CalculateFrustumPlanes(playerCam), objCollider.bounds));
+        if (waypoint.activeSelf)
+        {
+            waypoint.transform.position = playerCam.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z));
+        }
     }
     public void InteractRangeEnter()
     {

@@ -8,7 +8,7 @@ using System;
 using Unity.Mathematics;
 using UnityEngine.UI;
 
-
+// Created by Herman Bergström
 public class EnemyBehaviour : MonoBehaviour
 {
     // Health

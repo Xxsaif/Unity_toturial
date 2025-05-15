@@ -2,7 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+// Created by Herman Bergström
 public class Hotbar : Inventory
 {
     [HideInInspector] public int selected_id;

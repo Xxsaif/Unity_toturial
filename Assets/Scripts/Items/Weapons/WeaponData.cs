@@ -1,5 +1,5 @@
 using UnityEngine;
-
+// Created by Herman Bergström
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Scriptable Objects/WeaponData")]
 public class WeaponData : ScriptableObject
 {

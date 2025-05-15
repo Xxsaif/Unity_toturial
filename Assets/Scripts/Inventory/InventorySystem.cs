@@ -3,22 +3,9 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+// Created by Herman Bergström
 public class InventorySystem : MonoBehaviour
 {
-
-    
-    void Start()
-    {
-        
-    }
-
-
-    void Update()
-    {
-        
-
-    }
     public void MoveItem(Inventory fromInv, Inventory toInv, int fromPos, int toPos, int q)
     {
         int quantity = q;
