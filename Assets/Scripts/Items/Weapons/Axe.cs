@@ -12,8 +12,6 @@ public class Axe : Weapon
 
     void Start()
     {
-        attacking = false;
-        inventory = GameObject.FindWithTag("Player").GetComponent<Inventory>();
         hotbar = GameObject.FindWithTag("Player").GetComponent<Hotbar>();
     }
 
@@ -30,12 +28,12 @@ public class Axe : Weapon
 
     protected override IEnumerator Attack()
     {
-        hotbar.canSwapItem = false;
         attacking = true;
+        playerAttacking = true;
         yield return new WaitForSeconds(1.5f / animator.GetCurrentAnimatorStateInfo(0).speed);
         enemiesHit.Clear();
+        playerAttacking = false;
         attacking = false;
-        hotbar.canSwapItem = true;
     }
 
 

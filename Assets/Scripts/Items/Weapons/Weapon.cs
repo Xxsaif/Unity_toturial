@@ -12,13 +12,9 @@ public abstract class Weapon : MonoBehaviour
 
     public WeaponData weaponData;
     protected Hotbar hotbar;
-    protected Inventory inventory;
-    protected bool attacking;
+    public static bool playerAttacking = false;
+    protected bool attacking = false;
     [SerializeField] protected PlayerLevelSystem playerLevelSystem;
-    void Start()
-    {
-        //playerLevelSystem = GameObject.Find("Player").GetComponent<PlayerLevelSystem>();
-    }
     
     void Update()
     {
@@ -30,7 +26,7 @@ public abstract class Weapon : MonoBehaviour
         yield return null;
     }
 
-    protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !inventory.inventoryActive;
+    protected bool CanAttack() => Input.GetKey(KeyCode.Mouse0) && !attacking && !InventorySystem.inventoryActive && !PauseMenu.paused;
 
     public float Damage() => weaponData.damage * playerLevelSystem.PlayerDamageMultiplier;
 }

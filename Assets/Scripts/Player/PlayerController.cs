@@ -36,8 +36,6 @@ public class PlayerController : MonoBehaviour
     private float timer;
     [SerializeField] private TextMeshProUGUI timerText;
 
-    public static bool inventoryActive;
-
     private PlayerLevelSystem playerLevelSystem;
     private readonly Color staminaNormalColor = new Color(95f, 95f, 95f, 170f) / 255f;
     private readonly Color staminaExhaustedColor = new Color(255f, 0f, 0f, 170f) / 255f;
@@ -48,7 +46,6 @@ public class PlayerController : MonoBehaviour
     {
         maxStamina = baseMaxStamina;
         stamina = maxStamina;
-        inventoryActive = false;
         controller = GetComponent<CharacterController>();
         grounded = true;
         moveSpeed = walkSpeed;
@@ -72,7 +69,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = -3f;
         }
 
-        if (!inventoryActive)
+        if (!InventorySystem.inventoryActive)
         {
             float hInput = Input.GetAxisRaw("Horizontal");
             float vInput = Input.GetAxisRaw("Vertical");
@@ -117,7 +114,7 @@ public class PlayerController : MonoBehaviour
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
         }
-        else if (inventoryActive)
+        else if (InventorySystem.inventoryActive)
         {
             moveSpeed = walkSpeed;
         }

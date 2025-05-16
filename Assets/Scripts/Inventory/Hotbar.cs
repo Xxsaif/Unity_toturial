@@ -32,7 +32,7 @@ public class Hotbar : Inventory
 
     private void Update()
     {
-        if (canSwapItem && !inventoryActive)
+        if (canSwapItem && !InventorySystem.inventoryActive && !Weapon.playerAttacking && !PauseMenu.paused)
         {
             if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C))
             {

@@ -11,6 +11,7 @@ public class Inventory : MonoBehaviour
     public Slot[] inventorySlots;
     [HideInInspector] public bool inventoryActive;
 
+
     void Start()
     {
         inventoryItems = new Item[inventorySlots.Length];
@@ -19,7 +20,6 @@ public class Inventory : MonoBehaviour
             inventorySlots[i].inventory = this;
             inventorySlots[i].slotInventoryPos = i;
         }
-        
     }
 
 
@@ -33,11 +33,11 @@ public class Inventory : MonoBehaviour
 
     public void ChangeActiveState()
     {
-        if (inventoryActive == PlayerController.inventoryActive)
+        if (inventoryActive == InventorySystem.inventoryActive && !Weapon.playerAttacking && !PauseMenu.paused)
         {
             inventoryScreen.SetActive(!inventoryScreen.activeSelf);
             inventoryActive = inventoryScreen.activeSelf;
-            PlayerController.inventoryActive = inventoryActive;
+            InventorySystem.inventoryActive = inventoryActive;
             if (inventoryScreen.activeSelf)
             {
                 Cursor.lockState = CursorLockMode.None;

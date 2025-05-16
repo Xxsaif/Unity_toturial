@@ -6,6 +6,7 @@ using UnityEngine.UI;
 // Created by Herman Bergström
 public class InventorySystem : MonoBehaviour
 {
+    [HideInInspector] public static bool inventoryActive = false;
     public void MoveItem(Inventory fromInv, Inventory toInv, int fromPos, int toPos, int q)
     {
         int quantity = q;

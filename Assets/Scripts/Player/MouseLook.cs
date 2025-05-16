@@ -18,7 +18,7 @@ public class MouseLook : MonoBehaviour
     
     void Update()
     {
-        if (!PlayerController.inventoryActive)
+        if (!InventorySystem.inventoryActive)
         {
             float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
@@ -33,12 +33,6 @@ public class MouseLook : MonoBehaviour
         }
 
         underWaterHud.SetActive(InWater());
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
     }
 
     private bool InWater() => transform.position.y < water.position.y;
