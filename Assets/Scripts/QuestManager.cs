@@ -1,112 +1,135 @@
 using TMPro;
 using UnityEngine;
-// Created by Herman Bergström
+// Created by Herman BergstrÃ¶m
 public class QuestManager : MonoBehaviour
 {
-    
     [SerializeField] private TextMeshProUGUI questText;
+    [SerializeField] private Hotbar playerHotbar;
     [SerializeField] private Inventory playerInventory;
     [SerializeField] private Inventory chestInventory;
     [SerializeField] private DroppedItem[] missionItems;
     [SerializeField] private GameObject gameoverScreen;
-    private int currentQuestId = 0;
+
+    private int currentItemIndex = 0;
+    private bool isDepositPhase = false;
+    private bool questCompleted = false;
+
     void Start()
     {
-        questText.text = GetQuestText(currentQuestId);
-        missionItems[0].waypointActive = true;
+        if (missionItems.Length > 0)
+        {
+            UpdateQuestText();
+            missionItems[0].waypointActive = true;
+        }
     }
 
-    
     void Update()
     {
-        if (IsQuestDone(currentQuestId))
+        if (!questCompleted && currentItemIndex < missionItems.Length && IsCurrentQuestDone())
         {
             NextQuest();
         }
-        //if (Input.GetKeyUp(KeyCode.T)) // Instant win button for testing gamer over screen
-        //{
-        //    currentQuestId = 5;
-        //    NextQuest();
-        //}
     }
 
-    private bool IsQuestDone(int id)
+    private bool PlayerHasItem(Item.ItemType type)
     {
-        switch (id)
+        return playerHotbar.ContainsType(type) || playerInventory.ContainsType(type);
+    }
+
+    private bool ChestHasItem(Item.ItemType type)
+    {
+        return chestInventory.ContainsType(type);
+    }
+
+    private bool IsCurrentQuestDone()
+    {
+        Item.ItemType currentType = missionItems[currentItemIndex].type;
+
+        if (!isDepositPhase)
         {
-            case 0:
-                return playerInventory.ContainsType(Item.ItemType.Rock);
-
-            case 1:
-                return chestInventory.ContainsType(Item.ItemType.Rock);
-
-            case 2:
-                return playerInventory.ContainsType(Item.ItemType.Stick);
-
-            case 3:
-                return chestInventory.ContainsType(Item.ItemType.Stick);
-
-            case 4:
-                return playerInventory.ContainsType(Item.ItemType.String);
-
-            case 5:
-                return chestInventory.ContainsType(Item.ItemType.String);
+            // Pickup phase - player has it OR it's already in chest (skipped ahead)
+            return PlayerHasItem(currentType) || ChestHasItem(currentType);
         }
-        return false;
+        else
+        {
+            // Deposit phase - check if chest has the item
+            return ChestHasItem(currentType);
+        }
     }
 
     private void NextQuest()
     {
-        currentQuestId++;
-        questText.text = GetQuestText(currentQuestId);
-        switch (currentQuestId)
+        Item.ItemType currentType = missionItems[currentItemIndex].type;
+
+        if (!isDepositPhase)
         {
-            case 2:
-                missionItems[1].waypointActive = true;
-                break;
+            // Check if item is already in chest (player skipped ahead)
+            if (ChestHasItem(currentType))
+            {
+                // Skip directly to next item
+                currentItemIndex++;
 
-            case 4:
-                missionItems[2].waypointActive = true;
-                break;
-            case 6:
-                Time.timeScale = 0;
-                GameObject player = GameObject.Find("Player");
-                GameObject playerCam = GameObject.Find("PlayerCam");
-                player.GetComponent<PlayerController>().enabled = false;
-                player.GetComponent<PlayerInteractions>().enabled = false;
-                playerCam.GetComponent<MouseLook>().enabled = false;
-                gameoverScreen.SetActive(true);
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                break;
+                if (currentItemIndex >= missionItems.Length)
+                {
+                    questCompleted = true;
+                    TriggerWin();
+                    return;
+                }
 
+                missionItems[currentItemIndex].waypointActive = true;
+                UpdateQuestText();
+            }
+            else
+            {
+                // Normal flow - move to deposit phase
+                isDepositPhase = true;
+                UpdateQuestText();
+            }
+        }
+        else
+        {
+            // Completed deposit - move to next item
+            currentItemIndex++;
+
+            if (currentItemIndex >= missionItems.Length)
+            {
+                questCompleted = true;
+                TriggerWin();
+                return;
+            }
+
+            isDepositPhase = false;
+            missionItems[currentItemIndex].waypointActive = true;
+            UpdateQuestText();
         }
     }
 
-    
-
-    private string GetQuestText(int id)
+    private void UpdateQuestText()
     {
-        switch (id)
+        string itemName = missionItems[currentItemIndex].type.ToString();
+        int questNumber = (currentItemIndex * 2) + (isDepositPhase ? 2 : 1);
+
+        if (!isDepositPhase)
         {
-            case 0:
-                return "Quest 1: Acquire a rock";
-
-            case 1:
-                return "Quest 2: Return the rock to the chest";
-
-            case 2:
-                return "Quest 3: Acquire a stick";
-
-            case 3:
-                return "Quest 4: Return the stick to the chest";
-
-            case 4:
-                return "Quest 5: Acquire a string";
-
-            case 5:
-                return "Quest 6: Return the string to the chest";
+            questText.text = $"Quest {questNumber}: Acquire a {itemName}";
         }
-        return string.Empty;
+        else
+        {
+            questText.text = $"Quest {questNumber}: Return the {itemName} to the chest";
+        }
+    }
+
+    private void TriggerWin()
+    {
+        questText.text = "All items collected! You win!";
+        Time.timeScale = 0;
+        GameObject player = GameObject.Find("Player");
+        GameObject playerCam = GameObject.Find("PlayerCam");
+        player.GetComponent<PlayerController>().enabled = false;
+        player.GetComponent<PlayerInteractions>().enabled = false;
+        playerCam.GetComponent<MouseLook>().enabled = false;
+        gameoverScreen.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }
