@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-// Created by Herman Bergström
+// Created by Herman Bergstrï¿½m
 public class Medkit : MonoBehaviour
 {
     private PlayerHealth playerHealthScr;
@@ -32,10 +32,10 @@ public class Medkit : MonoBehaviour
     {
         hotbar.canSwapItem = false;
         isUsing = true;
-        yield return new WaitForSeconds(0.833f);
+        yield return new WaitForSeconds(0.833f);  // Medkits gradually heal you so we have to use a timer in order to add health to the player in 2 stages.
         playerHealthScr.Heal(50);
-        yield return new WaitForSeconds(0.833f);
-        hotbar.RemoveFrom(hotbar.selected_id, 1);
+        yield return new WaitForSeconds(0.833f); // Last timer
+        hotbar.RemoveFrom(hotbar.selected_id, 1); // Remove from hotbar and inventory since a medkit only has one use per item.
         isUsing = false;
         hotbar.canSwapItem = true;
     }

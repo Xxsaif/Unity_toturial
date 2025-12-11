@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 using UnityEngine.UI;
-// Created by Herman Bergström
+// Created by Herman Bergstrï¿½m
 public class PlayerController : MonoBehaviour
 {
     private float moveSpeed;
@@ -55,9 +55,8 @@ public class PlayerController : MonoBehaviour
     
     void Update()
     {
-        /* Skapar sfär vid positionen av groundcheck som är placerad vid spelarens fot. GroundDistance är radiusen av sfären. 
-         * Den kollar om det finns något objekt på lagret ground (groundMask) som kolliderar med sfären och returnerar en bool. 
-         */
+        // Creates a sphere at the position of the groundcheck thats's placed at the players feet. GroundDistance is the radius of the sphere.
+        // It only collides if theres a game object laying on the ground (groundMask) that will collide with the sphere and return a bool.
         grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         timer += Time.deltaTime;
@@ -69,6 +68,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = -3f;
         }
 
+        // Only run movement code when inventory is closed to avoid accidental moves.
         if (!InventorySystem.inventoryActive)
         {
             float hInput = Input.GetAxisRaw("Horizontal");

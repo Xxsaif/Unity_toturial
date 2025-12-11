@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
-// Created by Herman Bergström
+// Created by Herman Bergstrï¿½m
+// Modified by Louis Gericke
 public class DroppedItem : MonoBehaviour, InteractableObject
 {
     private Hotbar hotbar;  // Changed from Inventory to Hotbar
@@ -19,7 +20,7 @@ public class DroppedItem : MonoBehaviour, InteractableObject
     void Start()
     {
         GameObject player = GameObject.Find("Player");
-        hotbar = player.GetComponent<Hotbar>();  // Changed to GetComponent<Hotbar>()
+        hotbar = player.GetComponent<Hotbar>();
         playerTransform = player.GetComponent<Transform>();
         item = new Item(type, quantity);
         placementIndicator.SetActive(false);
@@ -27,6 +28,8 @@ public class DroppedItem : MonoBehaviour, InteractableObject
         playerCam = GameObject.Find("PlayerCam").GetComponent<Camera>();
     }
 
+    // If the quest script tells us that this dropped item is part of an active quest we have to calculate 
+    // the world to screen position and draw a waypoint icon on ourselfs.
     void Update()
     {
         waypoint.SetActive(waypointActive && GeometryUtility.TestPlanesAABB(GeometryUtility.CalculateFrustumPlanes(playerCam), objCollider.bounds));
@@ -53,7 +56,7 @@ public class DroppedItem : MonoBehaviour, InteractableObject
 
     public void Interact()
     {
-        hotbar.AddItem(type, quantity);  // Now adds to hotbar
+        hotbar.AddItem(type, quantity);
         interactionText.text = string.Empty;
         gameObject.SetActive(false);
     }
