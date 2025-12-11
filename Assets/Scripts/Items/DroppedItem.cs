@@ -3,7 +3,7 @@ using UnityEngine;
 // Created by Herman Bergström
 public class DroppedItem : MonoBehaviour, InteractableObject
 {
-    private Inventory inventory;
+    private Hotbar hotbar;  // Changed from Inventory to Hotbar
     public Item item;
     public Item.ItemType type;
     public int quantity;
@@ -15,10 +15,11 @@ public class DroppedItem : MonoBehaviour, InteractableObject
     private Transform playerTransform;
     [SerializeField] private Collider objCollider;
     [HideInInspector] public bool waypointActive;
+
     void Start()
     {
         GameObject player = GameObject.Find("Player");
-        inventory = player.GetComponent<Inventory>();
+        hotbar = player.GetComponent<Hotbar>();  // Changed to GetComponent<Hotbar>()
         playerTransform = player.GetComponent<Transform>();
         item = new Item(type, quantity);
         placementIndicator.SetActive(false);
@@ -34,6 +35,7 @@ public class DroppedItem : MonoBehaviour, InteractableObject
             waypoint.transform.position = playerCam.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z));
         }
     }
+
     public void InteractRangeEnter()
     {
         interactionText.text = "Press F to\nPick up " + item.Name;
@@ -51,9 +53,8 @@ public class DroppedItem : MonoBehaviour, InteractableObject
 
     public void Interact()
     {
-        inventory.AddItem(type, quantity);
+        hotbar.AddItem(type, quantity);  // Now adds to hotbar
         interactionText.text = string.Empty;
         gameObject.SetActive(false);
     }
-    
 }
